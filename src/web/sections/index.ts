@@ -2,6 +2,7 @@ import type { ComponentType } from "react"
 
 import type { SectionName } from "@/core/config-schema"
 
+import { CertificatesSection } from "./certificates"
 import { EducationSection } from "./education"
 import { LanguagesSection } from "./languages"
 import { ProjectsSection } from "./projects"
@@ -17,6 +18,7 @@ export const sections: Record<SectionName, ComponentType<SectionProps>> = {
   projects: ProjectsSection,
   skills: SkillsSection,
   education: EducationSection,
+  certificates: CertificatesSection,
   languages: LanguagesSection,
 }
 

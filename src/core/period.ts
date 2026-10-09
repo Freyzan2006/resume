@@ -1,7 +1,7 @@
 import type { Period } from "./resume-schema.ts"
 
 /** "2022" → "2022", "2022-03" and "2022-03-15" → "03.2022". */
-function formatDate(value: string) {
+export function formatDate(value: string) {
   const [year, month] = value.split("-")
   return month ? `${month}.${year}` : year
 }

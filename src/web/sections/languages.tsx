@@ -1,6 +1,6 @@
 import { Section, type SectionProps } from "./section"
 
-export function LanguagesSection({ resume, labels }: SectionProps) {
+export function LanguagesSection({ locale: { resume, labels } }: SectionProps) {
   if (resume.languages.length === 0) {
     return null
   }

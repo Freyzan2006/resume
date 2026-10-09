@@ -52,12 +52,13 @@ describe("exportJson", () => {
   })
 
   it("exports the real assets/ as a valid resume", async () => {
-    const { source } = await loadSite(
+    const { sources } = await loadSite(
       resolve(import.meta.dirname, "../../../assets")
     )
 
-    const json = await exportSource(source)
-
-    expect(resumeSchema.safeParse(json).success).toBe(true)
+    for (const source of Object.values(sources)) {
+      const json = await exportSource(source)
+      expect(resumeSchema.safeParse(json).success).toBe(true)
+    }
   })
 })

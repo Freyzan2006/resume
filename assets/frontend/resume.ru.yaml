@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../schemas/resume.schema.json
+# yaml-language-server: $schema=../../schemas/resume.schema.json
 #
 # Резюме в формате JSON Resume (https://jsonresume.org/schema), записанное в YAML.
 # Поля summary, description и highlights поддерживают markdown.
@@ -7,6 +7,8 @@
 basics:
   name: Иван Иванов
   label: Frontend-разработчик
+  # Фото: путь относительно этого файла или URL. Замените photo.svg на своё фото.
+  image: ../photo.svg
   email: ivan@example.com
   phone: "+7 900 000-00-00"
   location:
@@ -62,6 +64,12 @@ education:
     area: Прикладная информатика
     startDate: 2015-09
     endDate: 2019-06
+
+certificates:
+  - name: Advanced React Patterns
+    issuer: Frontend Masters
+    date: 2023-05
+    url: https://frontendmasters.com
 
 languages:
   - language: Русский

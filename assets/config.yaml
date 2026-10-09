@@ -1,16 +1,26 @@
 # yaml-language-server: $schema=../schemas/config.schema.json
 #
 # Настройки сайта. Файл необязательный: без него действуют значения по умолчанию.
+#
+# Структура assets/:
+#   config.yaml                    этот файл
+#   <профиль>/resume.<язык>.yaml   по папке на специальность, по файлу на язык
 
-# Язык сайта. Для ru и en подписи разделов встроены.
+# Какое резюме собирать — папка в assets/. Можно не указывать, если папка одна.
+profile: devops
+
+# Основной язык: его версия открывается по умолчанию. Остальные языки берутся
+# из файлов resume.<язык>.yaml профиля и переключаются на сайте.
 lang: ru
 
 # Какие разделы показывать и в каком порядке.
-sections: [summary, work, projects, skills, education, languages]
+sections:
+  [summary, work, projects, skills, education, certificates, languages]
 
 # В каких форматах резюме можно скачать с сайта: pdf, json (JSON Resume).
 formats: [pdf, json]
 
-# Свои подписи вместо встроенных, например:
+# Свои подписи вместо встроенных, по языкам, например:
 # labels:
-#   work: Карьера
+#   ru:
+#     work: Карьера

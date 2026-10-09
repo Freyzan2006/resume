@@ -1,0 +1,76 @@
+# yaml-language-server: $schema=../../schemas/resume.schema.json
+#
+# English version of resume.ru.yaml — same JSON Resume structure.
+
+basics:
+  name: Ivan Ivanov
+  label: Frontend Developer
+  image: ../photo.svg
+  email: ivan@example.com
+  phone: "+7 900 000-00-00"
+  location:
+    city: Moscow
+    countryCode: RU
+  summary: |
+    Frontend developer with **5+ years** of experience. I build fast, accessible
+    interfaces with React and TypeScript and care about strict typing and clear
+    architecture.
+  profiles:
+    - network: GitHub
+      username: example
+      url: https://github.com/example
+    - network: Telegram
+      username: example
+      url: https://t.me/example
+
+work:
+  - name: Example LLC
+    position: Senior Frontend Developer
+    location: Remote
+    url: https://example.com
+    startDate: 2022-03
+    highlights:
+      - Moved a monolithic SPA to a modular architecture
+      - Cut initial load time by **40%**
+    keywords: [React, TypeScript, Reatom, Vite]
+
+  - name: Placeholder Studio
+    position: Frontend Developer
+    startDate: 2019-09
+    endDate: 2022-02
+    summary: |
+      Client projects, from landing pages to customer dashboards.
+    keywords: [React, Redux, SCSS]
+
+projects:
+  - name: Resume
+    description: A resume website and PDF built from a single YAML file.
+    url: https://github.com/example/resume
+    keywords: [React, Vite, Playwright]
+
+skills:
+  - name: Languages
+    keywords: [TypeScript, JavaScript, HTML, CSS]
+  - name: Frameworks
+    keywords: [React, Reatom, Tailwind CSS]
+  - name: Tools
+    keywords: [Vite, Vitest, Playwright, Git]
+
+education:
+  - institution: Moscow University
+    studyType: Bachelor
+    area: Applied Computer Science
+    startDate: 2015-09
+    endDate: 2019-06
+
+certificates:
+  - name: Advanced React Patterns
+    issuer: Frontend Masters
+    date: 2023-05
+    url: https://frontendmasters.com
+
+languages:
+  - language: Russian
+    fluency: Native
+  - language: English
+    fluency: B2

@@ -19,10 +19,13 @@ function initialsFavicon(name: string) {
   return `data:image/svg+xml,${encodeURIComponent(svg)}`
 }
 
-/** index.html with the person's language, title, description and favicon. */
-export function personalizeHtml(html: string, { resume, lang }: SiteData) {
-  const { name, label } = resume.basics
-  const title = label ? `${name} — ${label}` : name
+/**
+ * index.html with the person's primary language, title, description and
+ * favicon. The web layer updates lang and title when the language changes.
+ */
+export function personalizeHtml(html: string, { locales }: SiteData) {
+  const [{ lang, title, resume }] = locales
+  const { name } = resume.basics
 
   return {
     html: html

@@ -1,6 +1,6 @@
 import { joinParts, Section, type SectionProps } from "./section"
 
-export function SkillsSection({ resume, labels }: SectionProps) {
+export function SkillsSection({ locale: { resume, labels } }: SectionProps) {
   if (resume.skills.length === 0) {
     return null
   }

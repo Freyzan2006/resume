@@ -1,6 +1,6 @@
-import { cp, mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
+import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from "node:fs/promises"
 import { tmpdir } from "node:os"
-import { join, resolve } from "node:path"
+import { dirname, join, resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
 import { renderJsonSchemas, SCHEMAS_DIR } from "./json-schema.ts"
@@ -13,35 +13,193 @@ let dir: string
 
 beforeEach(async () => {
   dir = await mkdtemp(join(tmpdir(), "resume-"))
-  await cp(ASSETS, dir, { recursive: true })
 })
 
 afterEach(async () => {
   await rm(dir, { recursive: true, force: true })
 })
 
-async function problemsOf(promise: Promise<unknown>): Promise<string[]> {
-  const error = await promise.catch((error: unknown) => error)
-  expect(error).toBeInstanceOf(ResumeError)
-  return (error as ResumeError).problems
+/** Writes files relative to the temp assets dir. */
+async function write(files: Record<string, string>) {
+  for (const [name, content] of Object.entries(files)) {
+    await mkdir(dirname(join(dir, name)), { recursive: true })
+    await writeFile(join(dir, name), content)
+  }
 }
 
-const write = (name: string, content: string) =>
-  writeFile(join(dir, name), content)
+async function problemsOf(promise: Promise<unknown>): Promise<string> {
+  const error = await promise.catch((error: unknown) => error)
+  expect(error).toBeInstanceOf(ResumeError)
+  return (error as ResumeError).problems.join("\n")
+}
 
-describe("loadSite", () => {
-  it("loads the real assets/", async () => {
+const minimal = (name = "A") => `basics: { name: ${name} }`
+
+describe("loadSite: the real assets/", () => {
+  it("loads without warnings", async () => {
     const { data, warnings } = await loadSite(ASSETS)
 
-    expect(data.resume.basics.name).toBeTruthy()
-    expect(data.labels.work).toBeTruthy()
+    expect(data.locales[0].resume.basics.name).toBeTruthy()
     expect(warnings).toEqual([])
   })
+})
 
-  it("renders markdown fields to HTML", async () => {
-    await write(
-      "resume.yaml",
-      [
+describe("loadSite: profiles", () => {
+  it("uses the only profile when config does not name one", async () => {
+    await write({ "frontend/resume.ru.yaml": minimal() })
+
+    expect((await loadSite(dir)).data.profile).toBe("frontend")
+  })
+
+  it("builds the profile chosen in config.yaml", async () => {
+    await write({
+      "config.yaml": "profile: devops",
+      "frontend/resume.ru.yaml": minimal("Front"),
+      "devops/resume.ru.yaml": minimal("Ops"),
+    })
+
+    const { data } = await loadSite(dir)
+
+    expect(data.profile).toBe("devops")
+    expect(data.locales[0].resume.basics.name).toBe("Ops")
+  })
+
+  it("asks to choose when there are several profiles", async () => {
+    await write({
+      "frontend/resume.ru.yaml": minimal(),
+      "devops/resume.ru.yaml": minimal(),
+    })
+
+    expect(await problemsOf(loadSite(dir))).toMatch(
+      /несколько \(devops, frontend\).*profile: devops/
+    )
+  })
+
+  it("rejects an unknown profile and lists the existing ones", async () => {
+    await write({
+      "config.yaml": "profile: backend",
+      "frontend/resume.ru.yaml": minimal(),
+    })
+
+    expect(await problemsOf(loadSite(dir))).toMatch(/«backend».*есть: frontend/)
+  })
+
+  it("reports an assets/ without resumes", async () => {
+    await write({ "config.yaml": "lang: ru" })
+
+    expect(await problemsOf(loadSite(dir))).toMatch(/нет ни одного резюме/)
+  })
+
+  it("ignores profiles other than the chosen one, even broken ones", async () => {
+    await write({
+      "config.yaml": "profile: frontend",
+      "frontend/resume.ru.yaml": minimal(),
+      "devops/resume.ru.yaml": "basics: {}",
+    })
+
+    await expect(loadSite(dir)).resolves.toBeTruthy()
+  })
+})
+
+describe("loadSite: languages", () => {
+  it("puts the primary language first, then the rest alphabetically", async () => {
+    await write({
+      "config.yaml": "lang: en",
+      "p/resume.ru.yaml": minimal("Иван"),
+      "p/resume.de.yaml": minimal("Iwan"),
+      "p/resume.en.yaml": minimal("Ivan"),
+    })
+
+    const { data, sources } = await loadSite(dir)
+
+    expect(data.locales.map((locale) => locale.lang)).toEqual([
+      "en",
+      "de",
+      "ru",
+    ])
+    expect(data.locales[2].labels.work).toBe("Опыт работы")
+    expect(Object.keys(sources).sort()).toEqual(["de", "en", "ru"])
+  })
+
+  it("requires a version in the primary language", async () => {
+    await write({ "p/resume.en.yaml": minimal() })
+
+    expect(await problemsOf(loadSite(dir))).toMatch(
+      /нет resume\.ru\.yaml.*есть: en/
+    )
+  })
+
+  it("rejects two files for one language", async () => {
+    await write({
+      "p/resume.ru.yaml": minimal(),
+      "p/resume.ru.json": JSON.stringify({ basics: { name: "A" } }),
+    })
+
+    expect(await problemsOf(loadSite(dir))).toMatch(/оставьте только один/)
+  })
+
+  it("reads an existing JSON Resume file as is", async () => {
+    await write({
+      "p/resume.ru.json": JSON.stringify({
+        basics: { name: "A" },
+        work: [{ name: "Co", position: "Dev", startDate: "2020-01-15" }],
+      }),
+    })
+
+    const [{ resume }] = (await loadSite(dir)).data.locales
+
+    expect(resume.work[0].startDate).toBe("2020-01-15")
+  })
+
+  it("names downloads per language once there are several", async () => {
+    await write({
+      "config.yaml": "formats: [json, pdf]",
+      "p/resume.ru.yaml": minimal("Иван"),
+      "p/resume.en.yaml": minimal("Ivan"),
+    })
+
+    const [ru, en] = (await loadSite(dir)).data.locales
+
+    expect(ru.downloads[0]).toEqual({
+      format: "json",
+      label: "JSON Resume",
+      href: "resume.ru.json",
+      filename: "Иван (RU).json",
+    })
+    expect(en.downloads.map((item) => item.href)).toEqual([
+      "resume.en.json",
+      "resume.en.pdf",
+    ])
+  })
+
+  it("names a single-language download after the person, PDF by default", async () => {
+    await write({ "p/resume.ru.yaml": minimal("Иван") })
+
+    const [{ downloads }] = (await loadSite(dir)).data.locales
+
+    expect(downloads).toEqual([
+      expect.objectContaining({ href: "resume.ru.pdf", filename: "Иван.pdf" }),
+    ])
+  })
+
+  it("applies label overrides only to their language", async () => {
+    await write({
+      "config.yaml": "labels: { ru: { work: Карьера } }",
+      "p/resume.ru.yaml": minimal(),
+      "p/resume.en.yaml": minimal(),
+    })
+
+    const [ru, en] = (await loadSite(dir)).data.locales
+
+    expect(ru.labels.work).toBe("Карьера")
+    expect(en.labels.work).toBe("Experience")
+  })
+})
+
+describe("loadSite: content", () => {
+  it("renders markdown fields to HTML and keeps the source", async () => {
+    await write({
+      "p/resume.ru.yaml": [
         "basics:",
         "  name: A",
         "  summary: Hello **world**",
@@ -49,133 +207,123 @@ describe("loadSite", () => {
         "  - name: Co",
         "    position: Dev",
         "    highlights: ['Made it *fast*']",
-      ].join("\n")
-    )
+      ].join("\n"),
+    })
 
-    const { resume } = (await loadSite(dir)).data
+    const { data, sources } = await loadSite(dir)
+    const { resume } = data.locales[0]
 
     expect(resume.basics.summary).toBe("<p>Hello <strong>world</strong></p>")
     expect(resume.work[0].highlights).toEqual(["Made it <em>fast</em>"])
-  })
-
-  it("reads an existing JSON Resume file as is", async () => {
-    await rm(join(dir, "resume.yaml"))
-    await write(
-      "resume.json",
-      JSON.stringify({
-        basics: { name: "A" },
-        work: [{ name: "Co", position: "Dev", startDate: "2020-01-15" }],
-      })
-    )
-
-    const { resume } = (await loadSite(dir)).data
-
-    expect(resume.work[0].startDate).toBe("2020-01-15")
+    expect(sources.ru).toMatchObject({ basics: { summary: "Hello **world**" } })
   })
 
   it("keeps YAML dates as strings, including bare years", async () => {
-    await write(
-      "resume.yaml",
-      "basics: { name: A }\neducation:\n  - { institution: U, startDate: 2015, endDate: 2019-06-30 }"
-    )
+    await write({
+      "p/resume.ru.yaml": `${minimal()}\neducation:\n  - { institution: U, startDate: 2015, endDate: 2019-06-30 }`,
+    })
 
-    const [item] = (await loadSite(dir)).data.resume.education
+    const [item] = (await loadSite(dir)).data.locales[0].resume.education
 
     expect(item).toMatchObject({ startDate: "2015", endDate: "2019-06-30" })
   })
 
-  it("works without config.yaml", async () => {
-    await rm(join(dir, "config.yaml"))
+  it("resolves a local photo relative to the resume file", async () => {
+    await write({
+      "photo.png": "png",
+      "p/resume.ru.yaml": "basics: { name: A, image: ../photo.png }",
+    })
 
-    const { data } = await loadSite(dir)
+    const { data, localAssets, files } = await loadSite(dir)
+    const photo = join(dir, "photo.png")
 
-    expect(data.lang).toBe("ru")
-    expect(data.sections).toContain("work")
+    expect(data.locales[0].resume.basics.image).toBe(photo)
+    expect(localAssets).toEqual([photo])
+    expect(files).toContain(photo)
   })
 
-  it("applies config: language, section order and label overrides", async () => {
-    await write(
-      "config.yaml",
-      "lang: en-GB\nsections: [work, summary]\nlabels: { work: Career }"
+  it("leaves photo URLs as they are", async () => {
+    await write({
+      "p/resume.ru.yaml":
+        "basics: { name: A, image: 'https://example.com/me.jpg' }",
+    })
+
+    const { data, localAssets } = await loadSite(dir)
+
+    expect(data.locales[0].resume.basics.image).toBe(
+      "https://example.com/me.jpg"
     )
-
-    const { data } = await loadSite(dir)
-
-    expect(data.lang).toBe("en-GB")
-    expect(data.sections).toEqual(["work", "summary"])
-    expect(data.labels).toMatchObject({ work: "Career", skills: "Skills" })
+    expect(localAssets).toEqual([])
   })
 
-  it("lists downloads for the configured formats, PDF by default", async () => {
-    await write("config.yaml", "formats: [json, pdf]")
-    expect((await loadSite(dir)).data.downloads).toEqual([
-      {
-        format: "json",
-        label: "JSON Resume",
-        href: "resume.json",
-        filename: "Иван Иванов.json",
-      },
-      expect.objectContaining({ format: "pdf", href: "resume.pdf" }),
-    ])
+  it("rejects a missing or non-image photo", async () => {
+    await write({
+      "notes.txt": "",
+      "p/resume.ru.yaml": "basics: { name: A, image: me.jpg }",
+      "p/resume.en.yaml": "basics: { name: A, image: ../notes.txt }",
+    })
 
-    await rm(join(dir, "config.yaml"))
-    const { downloads } = (await loadSite(dir)).data
-    expect(downloads.map((item) => item.format)).toEqual(["pdf"])
-  })
+    const problems = await problemsOf(loadSite(dir))
 
-  it("rejects unknown formats", async () => {
-    await write("config.yaml", "formats: [docx]")
-
-    expect((await problemsOf(loadSite(dir))).join()).toMatch(/formats/)
-  })
-
-  it("reports a missing resume file", async () => {
-    await rm(join(dir, "resume.yaml"))
-
-    expect((await problemsOf(loadSite(dir))).join()).toMatch(/нет файла резюме/)
-  })
-
-  it("rejects two resume files at once", async () => {
-    await write("resume.json", "{}")
-
-    expect((await problemsOf(loadSite(dir))).join()).toMatch(
-      /оставьте только один/
-    )
+    expect(problems).toMatch(/файл не найден/)
+    expect(problems).toMatch(/ожидается изображение/)
   })
 
   it("reports YAML syntax errors with the file name", async () => {
-    await write("resume.yaml", "basics:\n  name: A: B")
+    await write({ "p/resume.ru.yaml": "basics:\n  name: A: B" })
 
-    expect((await problemsOf(loadSite(dir))).join()).toMatch(
-      /resume\.yaml: не удалось разобрать/
+    expect(await problemsOf(loadSite(dir))).toMatch(
+      /resume\.ru\.yaml: не удалось разобрать/
     )
   })
 
   it("rejects malformed dates and unknown fields", async () => {
-    await write(
-      "resume.yaml",
-      "basics: { name: A, nickname: B }\nwork:\n  - { name: Co, position: Dev, startDate: 2022-13 }"
-    )
+    await write({
+      "p/resume.ru.yaml":
+        "basics: { name: A, nickname: B }\nwork:\n  - { name: Co, position: Dev, startDate: 2022-13 }",
+    })
 
-    const problems = (await problemsOf(loadSite(dir))).join()
+    const problems = await problemsOf(loadSite(dir))
 
     expect(problems).toMatch(/YYYY-MM/)
     expect(problems).toMatch(/nickname/)
   })
 
-  it("collects problems from both files at once", async () => {
-    await write("resume.yaml", "basics: {}")
-    await write("config.yaml", "sections: [hobbies]")
+  it("collects problems from every language at once", async () => {
+    await write({
+      "p/resume.ru.yaml": "basics: {}",
+      "p/resume.en.yaml": "basics: {}",
+    })
 
-    expect(await problemsOf(loadSite(dir))).toHaveLength(2)
+    const error = await loadSite(dir).catch((error: ResumeError) => error)
+
+    expect((error as ResumeError).problems).toHaveLength(2)
+  })
+
+  it("rejects unknown config values", async () => {
+    await write({
+      "config.yaml": "formats: [docx]\nsections: [hobbies]",
+      "p/resume.ru.yaml": minimal(),
+    })
+
+    const problems = await problemsOf(loadSite(dir))
+
+    expect(problems).toMatch(/formats/)
+    expect(problems).toMatch(/sections/)
   })
 
   it("warns about JSON Resume sections the site does not render", async () => {
-    await write("resume.yaml", "basics: { name: A }\nawards: [{ title: X }]")
+    await write({ "p/resume.ru.yaml": `${minimal()}\nawards: [{ title: X }]` })
 
     const { warnings } = await loadSite(dir)
 
     expect(warnings).toEqual([expect.stringMatching(/awards/)])
+  })
+
+  it("copies cleanly from the real assets/", async () => {
+    await cp(ASSETS, dir, { recursive: true })
+
+    await expect(loadSite(dir)).resolves.toBeTruthy()
   })
 })
 

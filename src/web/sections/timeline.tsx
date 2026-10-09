@@ -26,7 +26,7 @@ export function TimelineItem({
       <div className="flex flex-wrap items-baseline justify-between gap-x-4">
         <h3 className="font-semibold">{title}</h3>
         {period && (
-          <span className="text-xs whitespace-nowrap text-muted-foreground tabular-nums">
+          <span className="ml-auto text-xs whitespace-nowrap text-muted-foreground tabular-nums">
             {period}
           </span>
         )}

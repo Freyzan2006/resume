@@ -13,6 +13,7 @@ export const ThemeToggle = reatomComponent(() => {
     <Button
       variant="ghost"
       size="icon-sm"
+      className={"cursor-pointer"}
       onClick={wrap(() => toggleTheme())}
       aria-label={isDark ? "Light theme" : "Dark theme"}
     >

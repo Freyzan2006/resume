@@ -1,0 +1,59 @@
+# yaml-language-server: $schema=../../schemas/resume.schema.json
+#
+# Второй профиль: то же резюме, но под DevOps. Чтобы собрать его, укажите
+# в assets/config.yaml: profile: devops
+
+basics:
+  name: Иван Иванов
+  label: DevOps-инженер
+  image: ../photo.svg
+  email: ivan@example.com
+  phone: "+7 900 000-00-00"
+  location:
+    city: Москва
+    countryCode: RU
+  summary: |
+    Переквалифицируюсь из frontend в DevOps: последние два года отвечаю за
+    CI/CD и инфраструктуру команды. Люблю автоматизацию и воспроизводимые сборки.
+  profiles:
+    - network: GitHub
+      username: example
+      url: https://github.com/example
+
+work:
+  - name: ООО «Пример»
+    position: Senior Frontend Developer, CI/CD
+    location: Удалённо
+    url: https://example.com
+    startDate: 2022-03
+    highlights:
+      - Перенёс сборку и деплой на GitHub Actions, время пайплайна — с 25 до 6 минут
+      - Настроил preview-окружения для каждого pull request
+    keywords: [GitHub Actions, Docker, Terraform, Linux]
+
+  - name: Студия «Заглушка»
+    position: Frontend Developer
+    startDate: 2019-09
+    endDate: 2022-02
+    keywords: [Docker, Nginx]
+
+skills:
+  - name: Инфраструктура
+    keywords: [Docker, Kubernetes, Terraform, Nginx]
+  - name: CI/CD
+    keywords: [GitHub Actions, GitLab CI]
+  - name: Системы
+    keywords: [Linux, Bash]
+
+education:
+  - institution: Московский университет
+    studyType: Бакалавр
+    area: Прикладная информатика
+    startDate: 2015-09
+    endDate: 2019-06
+
+languages:
+  - language: Русский
+    fluency: родной
+  - language: Английский
+    fluency: B2

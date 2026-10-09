@@ -1,11 +1,10 @@
 import type { ReactNode } from "react"
 
-import type { Labels } from "@/core/config-schema"
-import type { Resume } from "@/core/resume-schema"
+import type { Locale } from "@/core/site"
 import { Separator } from "@/web/ui/separator"
 
-/** Every section gets the whole resume and picks what it renders. */
-export type SectionProps = { resume: Resume; labels: Labels }
+/** Every section gets the whole language version and picks what it renders. */
+export type SectionProps = { locale: Locale }
 
 /** "a", undefined, "b" → "a · b"; nothing → undefined. */
 export const joinParts = (...parts: (string | undefined)[]) =>

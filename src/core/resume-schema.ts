@@ -38,7 +38,11 @@ const list = <T extends z.ZodType>(item: T) => z.array(item).default([])
 const basicsSchema = z.strictObject({
   name: text,
   label: text.optional().describe("Должность или короткий заголовок"),
-  image: text.optional().describe("URL фотографии"),
+  image: text
+    .optional()
+    .describe(
+      "Фото: URL или путь к файлу относительно резюме, например ../photo.jpg"
+    ),
   email: z.email().optional(),
   phone: text.optional(),
   url: url.optional().describe("Личный сайт"),
@@ -101,6 +105,13 @@ const skillSchema = z.strictObject({
   keywords: list(text),
 })
 
+const certificateSchema = z.strictObject({
+  name: text,
+  date: isoDate.optional(),
+  issuer: text.optional().describe("Кто выдал: Coursera, AWS, …"),
+  url: url.optional(),
+})
+
 const languageSchema = z.strictObject({
   language: text,
   fluency: text.optional(),
@@ -110,7 +121,6 @@ const languageSchema = z.strictObject({
 export const unrenderedSections = [
   "volunteer",
   "awards",
-  "certificates",
   "publications",
   "interests",
   "references",
@@ -128,10 +138,10 @@ export const resumeSchema = z.strictObject({
   projects: list(projectSchema),
   education: list(educationSchema),
   skills: list(skillSchema),
+  certificates: list(certificateSchema),
   languages: list(languageSchema),
   volunteer: unrendered,
   awards: unrendered,
-  certificates: unrendered,
   publications: unrendered,
   interests: unrendered,
   references: unrendered,

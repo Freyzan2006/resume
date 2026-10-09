@@ -17,12 +17,12 @@ function findBrowser(): string | undefined {
 }
 
 /** Prints the built site with headless Chromium, using its print styles. */
-export const exportPdf: Exporter = async ({ outFile, siteUrl }) => {
+export const exportPdf: Exporter = async ({ outFile, pageUrl }) => {
   const browser = await chromium.launch({ executablePath: findBrowser() })
 
   try {
     const page = await browser.newPage({ colorScheme: "light" })
-    await page.goto(await siteUrl(), { waitUntil: "networkidle" })
+    await page.goto(await pageUrl(), { waitUntil: "networkidle" })
     // Runs in the page; a string keeps DOM types out of the Node tsconfig.
     await page.evaluate("document.fonts.ready.then(() => {})")
     await page.pdf({

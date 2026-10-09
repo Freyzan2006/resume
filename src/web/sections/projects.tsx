@@ -3,7 +3,7 @@ import { formatPeriod } from "@/core/period"
 import { joinParts, Section, type SectionProps } from "./section"
 import { TimelineItem, TitleLink } from "./timeline"
 
-export function ProjectsSection({ resume, labels }: SectionProps) {
+export function ProjectsSection({ locale: { resume, labels } }: SectionProps) {
   if (resume.projects.length === 0) {
     return null
   }

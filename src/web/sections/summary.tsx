@@ -1,6 +1,6 @@
 import { Markdown, Section, type SectionProps } from "./section"
 
-export function SummarySection({ resume, labels }: SectionProps) {
+export function SummarySection({ locale: { resume, labels } }: SectionProps) {
   const { summary } = resume.basics
   if (!summary) {
     return null

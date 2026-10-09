@@ -18,7 +18,7 @@
           "minLength": 1
         },
         "image": {
-          "description": "URL фотографии",
+          "description": "Фото: URL или путь к файлу относительно резюме, например ../photo.jpg",
           "type": "string",
           "minLength": 1
         },
@@ -363,6 +363,44 @@
         "additionalProperties": false
       }
     },
+    "certificates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^\\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\\d|3[01]))?)?$"
+              },
+              {
+                "type": "integer",
+                "minimum": 1000,
+                "maximum": 9999
+              }
+            ]
+          },
+          "issuer": {
+            "description": "Кто выдал: Coursera, AWS, …",
+            "type": "string",
+            "minLength": 1
+          },
+          "url": {
+            "type": "string",
+            "format": "uri"
+          }
+        },
+        "required": [
+          "name"
+        ],
+        "additionalProperties": false
+      }
+    },
     "languages": {
       "default": [],
       "type": "array",
@@ -390,11 +428,6 @@
       "items": {}
     },
     "awards": {
-      "description": "Раздел JSON Resume, который сайт пока не показывает",
-      "type": "array",
-      "items": {}
-    },
-    "certificates": {
       "description": "Раздел JSON Resume, который сайт пока не показывает",
       "type": "array",
       "items": {}

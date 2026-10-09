@@ -1,12 +1,12 @@
-// Writes every format listed in assets/config.yaml (`formats`) into dist/.
-// Run after `vite build`.
+// Writes every format listed in assets/config.yaml (`formats`) for every
+// language version into dist/. Run after `vite build`.
 import { resolve } from "node:path"
 import { preview, type PreviewServer } from "vite"
 
 import { exporters } from "../exporters/index.ts"
 import { ASSETS_DIR, loadSite } from "../load.ts"
 
-const { data, source } = await loadSite(resolve(ASSETS_DIR))
+const { data, sources } = await loadSite(resolve(ASSETS_DIR))
 
 let server: PreviewServer | undefined
 
@@ -23,10 +23,15 @@ async function siteUrl() {
 }
 
 try {
-  for (const { format, href } of data.downloads) {
-    const outFile = resolve("dist", href)
-    await exporters[format]({ site: data, source, outFile, siteUrl })
-    console.log(`${format}: ${outFile}`)
+  for (const locale of data.locales) {
+    const pageUrl = async () => `${await siteUrl()}?lang=${locale.lang}`
+
+    for (const { format, href } of locale.downloads) {
+      const outFile = resolve("dist", href)
+      const source = sources[locale.lang]
+      await exporters[format]({ locale, source, outFile, pageUrl })
+      console.log(`${format}: ${outFile}`)
+    }
   }
 } finally {
   await server?.close()
