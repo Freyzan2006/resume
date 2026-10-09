@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build && node scripts/export.ts",
+    "build": "tsc -b && vite build && node src/build/cli/export.ts",
     "lint": "eslint .",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "typecheck": "tsc --noEmit",
@@ -13,8 +13,8 @@
     "build:site": "tsc -b && vite build",
     "test": "vitest run",
     "test:watch": "vitest",
-    "schema": "node scripts/schema.ts",
-    "export": "node scripts/export.ts"
+    "schema": "node src/build/cli/schema.ts",
+    "export": "node src/build/cli/export.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.8.0",

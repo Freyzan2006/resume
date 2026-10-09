@@ -4,8 +4,8 @@ import tailwindcss from "@tailwindcss/vite"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 
-import { resume } from "./plugins/resume/index.ts"
-import { ASSETS_DIR } from "./plugins/resume/load.ts"
+import { ASSETS_DIR } from "./src/build/load.ts"
+import { resume } from "./src/build/vite-plugin.ts"
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -18,6 +18,6 @@ export default defineConfig({
     },
   },
   test: {
-    include: ["{src,plugins,scripts,exporters}/**/*.test.ts"],
+    include: ["src/**/*.test.ts"],
   },
 })
