@@ -1,15 +1,20 @@
-import { readdir, readFile } from "node:fs/promises"
+import { existsSync } from "node:fs"
+import { readFile } from "node:fs/promises"
 import { join } from "node:path"
-import matter from "gray-matter"
+import { parse } from "yaml"
 import { z } from "zod"
 
+import { resolveLabels } from "../../src/resume/labels.ts"
 import {
-  sectionSchemas,
-  type Resume,
-  type SectionName,
+  configSchema,
+  resumeSchema,
+  unrenderedSections,
+  type SiteData,
 } from "../../src/resume/schema.ts"
 
-const sectionNames = Object.keys(sectionSchemas) as SectionName[]
+// YAML 1.2 is a superset of JSON, so an existing JSON Resume file works as is.
+export const RESUME_FILES = ["resume.yaml", "resume.yml", "resume.json"]
+export const CONFIG_FILES = ["config.yaml", "config.yml", "config.json"]
 
 export class ResumeError extends Error {
   readonly problems: string[]
@@ -21,59 +26,84 @@ export class ResumeError extends Error {
   }
 }
 
-export function sectionFiles(dir: string): string[] {
-  return sectionNames.map((name) => join(dir, `${name}.md`))
+type Source = { file: string; value: unknown }
+
+/** Reads and parses the one existing file out of `names`, if any. */
+async function readSource(
+  dir: string,
+  names: string[],
+  problems: string[]
+): Promise<Source | undefined> {
+  const found = names.map((name) => join(dir, name)).filter(existsSync)
+
+  if (found.length > 1) {
+    problems.push(`${found.join(", ")}: оставьте только один из этих файлов`)
+    return
+  }
+  if (found.length === 0) {
+    return
+  }
+
+  const [file] = found
+  try {
+    return { file, value: parse(await readFile(file, "utf8")) }
+  } catch (error) {
+    problems.push(`${file}: не удалось разобрать файл\n${error}`)
+  }
 }
 
-/** Reads, validates and renders every assets/<section>.md in `dir`. */
-export async function loadResume(dir: string): Promise<Resume> {
+function validate<T extends z.ZodType>(
+  schema: T,
+  { file, value }: Source,
+  problems: string[]
+): z.output<T> | undefined {
+  const result = schema.safeParse(value)
+  if (result.success) {
+    return result.data
+  }
+  problems.push(`${file}:\n${z.prettifyError(result.error)}`)
+}
+
+/**
+ * Reads, validates and renders assets/resume.* and the optional
+ * assets/config.*. Throws a ResumeError listing every problem at once.
+ */
+export async function loadSite(
+  dir: string
+): Promise<{ data: SiteData; warnings: string[] }> {
   const problems: string[] = []
-  const resume: Partial<Record<SectionName, unknown>> = {}
 
-  for (const name of sectionNames) {
-    const file = join(dir, `${name}.md`)
+  const resumeSource = await readSource(dir, RESUME_FILES, problems)
+  const configSource = await readSource(dir, CONFIG_FILES, problems)
 
-    let source: string
-    try {
-      source = await readFile(file, "utf8")
-    } catch {
-      problems.push(`${file}: файл не найден`)
-      continue
-    }
-
-    let parsed: matter.GrayMatterFile<string>
-    try {
-      // An empty options object bypasses gray-matter's global content cache.
-      parsed = matter(source, {})
-    } catch (error) {
-      problems.push(`${file}: не удалось разобрать frontmatter\n${error}`)
-      continue
-    }
-
-    const result = sectionSchemas[name].safeParse({
-      ...parsed.data,
-      body: parsed.content,
-    })
-    if (result.success) {
-      resume[name] = result.data
-    } else {
-      problems.push(`${file}:\n${z.prettifyError(result.error)}`)
-    }
+  if (!resumeSource && problems.length === 0) {
+    problems.push(
+      `${dir}: нет файла резюме, ожидается один из: ${RESUME_FILES.join(", ")}`
+    )
   }
 
-  const known = new Set(sectionNames.map((name) => `${name}.md`))
-  const entries = await readdir(dir).catch(() => [])
-  for (const entry of entries) {
-    if (entry.endsWith(".md") && !known.has(entry)) {
-      problems.push(
-        `${join(dir, entry)}: неизвестный раздел, ожидаются: ${[...known].join(", ")}`
-      )
-    }
-  }
+  const resume = resumeSource && validate(resumeSchema, resumeSource, problems)
+  const config = configSource
+    ? validate(configSchema, configSource, problems)
+    : configSchema.parse({})
 
-  if (problems.length > 0) {
+  if (problems.length > 0 || !resume || !config) {
     throw new ResumeError(problems)
   }
 
-  return resume as Resume
+  const warnings = unrenderedSections
+    .filter((key) => resume[key]?.length)
+    .map(
+      (key) => `раздел «${key}» есть в резюме, но сайт его пока не показывает`
+    )
+
+  return {
+    data: {
+      resume,
+      lang: config.lang,
+      sections: config.sections,
+      labels: resolveLabels(config),
+    },
+    warnings,
+  }
 }

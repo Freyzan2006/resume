@@ -1,0 +1,70 @@
+# yaml-language-server: $schema=../schemas/resume.schema.json
+#
+# Резюме в формате JSON Resume (https://jsonresume.org/schema), записанное в YAML.
+# Поля summary, description и highlights поддерживают markdown.
+# Даты: YYYY, YYYY-MM или YYYY-MM-DD; пустой endDate — «по настоящее время».
+
+basics:
+  name: Иван Иванов
+  label: Frontend-разработчик
+  email: ivan@example.com
+  phone: "+7 900 000-00-00"
+  location:
+    city: Москва
+    countryCode: RU
+  summary: |
+    Frontend-разработчик с **5+ годами** опыта. Делаю быстрые и доступные
+    интерфейсы на React и TypeScript, люблю строгую типизацию и понятную архитектуру.
+  profiles:
+    - network: GitHub
+      username: example
+      url: https://github.com/example
+    - network: Telegram
+      username: example
+      url: https://t.me/example
+
+work:
+  - name: ООО «Пример»
+    position: Senior Frontend Developer
+    location: Удалённо
+    url: https://example.com
+    startDate: 2022-03
+    highlights:
+      - Перевёл монолитный SPA на модульную архитектуру
+      - Сократил время первой загрузки на **40%**
+    keywords: [React, TypeScript, Reatom, Vite]
+
+  - name: Студия «Заглушка»
+    position: Frontend Developer
+    startDate: 2019-09
+    endDate: 2022-02
+    summary: |
+      Разработка клиентских проектов: от лендингов до личных кабинетов.
+    keywords: [React, Redux, SCSS]
+
+projects:
+  - name: Resume
+    description: Сайт-резюме и PDF из одного YAML-файла.
+    url: https://github.com/example/resume
+    keywords: [React, Vite, Playwright]
+
+skills:
+  - name: Языки
+    keywords: [TypeScript, JavaScript, HTML, CSS]
+  - name: Фреймворки
+    keywords: [React, Reatom, Tailwind CSS]
+  - name: Инструменты
+    keywords: [Vite, Vitest, Playwright, Git]
+
+education:
+  - institution: Московский университет
+    studyType: Бакалавр
+    area: Прикладная информатика
+    startDate: 2015-09
+    endDate: 2019-06
+
+languages:
+  - language: Русский
+    fluency: родной
+  - language: Английский
+    fluency: B2

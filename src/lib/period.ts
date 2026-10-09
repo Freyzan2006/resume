@@ -1,18 +1,22 @@
 import type { Period } from "@/resume/schema"
 
-const PRESENT: Record<string, string> = {
-  ru: "по наст. время",
-  en: "present",
-}
-
-function formatYearMonth(value: string) {
+/** "2022" → "2022", "2022-03" and "2022-03-15" → "03.2022". */
+function formatDate(value: string) {
   const [year, month] = value.split("-")
-  return `${month}.${year}`
+  return month ? `${month}.${year}` : year
 }
 
-/** "2022-03" … "present" → "03.2022 — по наст. время" (by <html lang>). */
-export function formatPeriod({ start, end }: Period, lang: string) {
-  const to =
-    end === "present" ? (PRESENT[lang] ?? PRESENT.en) : formatYearMonth(end)
-  return `${formatYearMonth(start)} — ${to}`
+/**
+ * JSON Resume period → "03.2022 — по наст. время". A missing endDate means
+ * "present"; with no dates at all there is nothing to show.
+ */
+export function formatPeriod(
+  { startDate, endDate }: Period,
+  presentLabel: string
+): string | undefined {
+  if (!startDate) {
+    return endDate && formatDate(endDate)
+  }
+  const end = endDate ? formatDate(endDate) : presentLabel
+  return `${formatDate(startDate)} — ${end}`
 }

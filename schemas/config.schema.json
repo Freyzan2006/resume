@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "lang": {
+      "default": "ru",
+      "description": "Язык сайта; для ru и en подписи встроены",
+      "type": "string",
+      "pattern": "^[a-z]{2,3}(-[A-Za-z0-9]+)*$"
+    },
+    "sections": {
+      "default": [
+        "summary",
+        "work",
+        "projects",
+        "skills",
+        "education",
+        "languages"
+      ],
+      "description": "Какие разделы показывать и в каком порядке",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "summary",
+          "work",
+          "projects",
+          "skills",
+          "education",
+          "languages"
+        ]
+      }
+    },
+    "labels": {
+      "default": {},
+      "description": "Свои подписи разделов вместо встроенных",
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "enum": [
+          "summary",
+          "work",
+          "projects",
+          "skills",
+          "education",
+          "languages",
+          "present"
+        ]
+      },
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false
+}

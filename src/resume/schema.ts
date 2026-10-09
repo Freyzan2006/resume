@@ -1,100 +1,185 @@
 import { z } from "zod"
 
-import { renderMarkdown } from "./markdown.ts"
+import { renderInlineMarkdown, renderMarkdown } from "./markdown.ts"
 
-// Schemas describe one assets/<section>.md file: its frontmatter plus the
-// markdown body under the `body` key. They run at build time only (inside the
-// Vite plugin), so the app imports nothing from here but types.
+// assets/resume.yaml follows the JSON Resume schema (https://jsonresume.org/schema)
+// and assets/config.yaml holds site settings. Both are validated at build time
+// inside the Vite plugin, so the app imports nothing from here but types.
+// Markdown fields arrive as source and leave as rendered HTML.
 
 const text = z.string().trim().min(1)
+const url = z.url()
 
-/** Markdown source in, rendered HTML out. */
+/** Block markdown: paragraphs, lists, emphasis, links. */
 const markdown = text.transform(renderMarkdown)
 
-const yearMonth = z
-  .string()
-  .regex(/^\d{4}-(0[1-9]|1[0-2])$/, "ожидается дата в формате YYYY-MM")
+/** One line of markdown: emphasis and links, no paragraph wrapper. */
+const inlineMarkdown = text.transform(renderInlineMarkdown)
+
+/** JSON Resume dates are partial ISO 8601; YAML reads a bare `2020` as a number. */
+const isoDate = z
+  .union([
+    z
+      .string()
+      .regex(
+        /^\d{4}(-(0[1-9]|1[0-2])(-(0[1-9]|[12]\d|3[01]))?)?$/,
+        "ожидается дата YYYY, YYYY-MM или YYYY-MM-DD"
+      ),
+    z.number().int().min(1000).max(9999),
+  ])
+  .transform(String)
 
 const period = {
-  start: yearMonth,
-  end: z.union([yearMonth, z.literal("present")]),
+  startDate: isoDate.optional(),
+  endDate: isoDate.optional().describe("Пусто — по настоящее время"),
 }
 
-const noBody = z
-  .string()
-  .trim()
-  .max(0, "у этого раздела всё описывается во frontmatter, текст не нужен")
+const list = <T extends z.ZodType>(item: T) => z.array(item).default([])
 
-export const contactSchema = z.strictObject({
+const basicsSchema = z.strictObject({
   name: text,
-  title: text,
-  location: text.optional(),
+  label: text.optional().describe("Должность или короткий заголовок"),
+  image: text.optional().describe("URL фотографии"),
   email: z.email().optional(),
   phone: text.optional(),
-  links: z.array(z.strictObject({ label: text, url: z.url() })).default([]),
-  body: noBody,
+  url: url.optional().describe("Личный сайт"),
+  summary: markdown.optional().describe("О себе, markdown"),
+  location: z
+    .strictObject({
+      address: text.optional(),
+      postalCode: text.optional(),
+      city: text.optional(),
+      countryCode: text.optional(),
+      region: text.optional(),
+    })
+    .optional(),
+  profiles: list(
+    z.strictObject({
+      network: text.describe("GitHub, Telegram, LinkedIn…"),
+      username: text.optional(),
+      url: url.optional(),
+    })
+  ),
 })
 
-export const summarySchema = z.strictObject({
-  title: text,
-  body: markdown,
+const workSchema = z.strictObject({
+  name: text.describe("Компания"),
+  position: text,
+  location: text.optional(),
+  description: text.optional().describe("Чем занимается компания"),
+  url: url.optional(),
+  ...period,
+  summary: markdown.optional().describe("Описание работы, markdown"),
+  highlights: list(inlineMarkdown).describe("Достижения, по одному на пункт"),
+  keywords: list(text).describe("Стек (расширение JSON Resume)"),
 })
 
-export const jobsSchema = z.strictObject({
-  title: text,
-  items: z
-    .array(
-      z.strictObject({
-        company: text,
-        position: text,
-        location: text.optional(),
-        url: z.url().optional(),
-        ...period,
-        stack: z.array(text).default([]),
-        description: markdown.optional(),
-      })
-    )
-    .min(1),
-  body: noBody,
+const projectSchema = z.strictObject({
+  name: text,
+  description: markdown.optional(),
+  highlights: list(inlineMarkdown),
+  keywords: list(text),
+  ...period,
+  url: url.optional(),
+  roles: list(text),
+  entity: text.optional(),
+  type: text.optional(),
 })
 
-export const educationSchema = z.strictObject({
-  title: text,
-  items: z
-    .array(
-      z.strictObject({
-        institution: text,
-        degree: text,
-        field: text.optional(),
-        ...period,
-        description: markdown.optional(),
-      })
-    )
-    .min(1),
-  body: noBody,
+const educationSchema = z.strictObject({
+  institution: text,
+  url: url.optional(),
+  area: text.optional().describe("Специальность"),
+  studyType: text.optional().describe("Степень: бакалавр, магистр…"),
+  ...period,
+  score: text.optional(),
+  courses: list(text),
 })
 
-export const skillsSchema = z.strictObject({
-  title: text,
-  groups: z
-    .array(z.strictObject({ name: text, items: z.array(text).min(1) }))
-    .min(1),
-  body: noBody,
+const skillSchema = z.strictObject({
+  name: text,
+  level: text.optional(),
+  keywords: list(text),
 })
 
-/** Every key is a required assets/<key>.md file. */
-export const sectionSchemas = {
-  contact: contactSchema,
-  summary: summarySchema,
-  jobs: jobsSchema,
-  education: educationSchema,
-  skills: skillsSchema,
+const languageSchema = z.strictObject({
+  language: text,
+  fluency: text.optional(),
+})
+
+/** JSON Resume sections the site accepts but does not render (yet). */
+export const unrenderedSections = [
+  "volunteer",
+  "awards",
+  "certificates",
+  "publications",
+  "interests",
+  "references",
+] as const
+
+const unrendered = z
+  .array(z.unknown())
+  .optional()
+  .describe("Раздел JSON Resume, который сайт пока не показывает")
+
+export const resumeSchema = z.strictObject({
+  $schema: z.string().optional(),
+  basics: basicsSchema,
+  work: list(workSchema),
+  projects: list(projectSchema),
+  education: list(educationSchema),
+  skills: list(skillSchema),
+  languages: list(languageSchema),
+  volunteer: unrendered,
+  awards: unrendered,
+  certificates: unrendered,
+  publications: unrendered,
+  interests: unrendered,
+  references: unrendered,
+  meta: z.record(z.string(), z.unknown()).optional(),
+})
+
+export const sectionNames = [
+  "summary",
+  "work",
+  "projects",
+  "skills",
+  "education",
+  "languages",
+] as const
+
+export type SectionName = (typeof sectionNames)[number]
+
+export const labelNames = [...sectionNames, "present"] as const
+
+export type Labels = Record<(typeof labelNames)[number], string>
+
+export const configSchema = z.strictObject({
+  $schema: z.string().optional(),
+  lang: z
+    .string()
+    .regex(/^[a-z]{2,3}(-[A-Za-z0-9]+)*$/, "ожидается код языка: ru, en, …")
+    .default("ru")
+    .describe("Язык сайта; для ru и en подписи встроены"),
+  sections: z
+    .array(z.enum(sectionNames))
+    .default([...sectionNames])
+    .describe("Какие разделы показывать и в каком порядке"),
+  labels: z
+    .partialRecord(z.enum(labelNames), text)
+    .default({})
+    .describe("Свои подписи разделов вместо встроенных"),
+})
+
+export type Resume = z.output<typeof resumeSchema>
+export type Config = z.output<typeof configSchema>
+
+export type Period = { startDate?: string; endDate?: string }
+
+/** What `virtual:resume` exports. */
+export type SiteData = {
+  resume: Resume
+  lang: string
+  sections: SectionName[]
+  labels: Labels
 }
-
-export type SectionName = keyof typeof sectionSchemas
-
-export type Resume = {
-  [K in SectionName]: z.output<(typeof sectionSchemas)[K]>
-}
-
-export type Period = Pick<Resume["jobs"]["items"][number], "start" | "end">

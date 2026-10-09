@@ -1,11 +1,19 @@
 import { Download, Moon, Sun } from "lucide-react"
-import resume from "virtual:resume"
+import type { ReactNode } from "react"
+import site from "virtual:resume"
 
 import { ContactHeader } from "@/components/resume/contact-header"
 import { Markdown, Section } from "@/components/resume/section"
-import { TimelineItem } from "@/components/resume/timeline"
+import { TimelineItem, TitleLink } from "@/components/resume/timeline"
 import { useTheme } from "@/components/theme-provider"
 import { Button, buttonVariants } from "@/components/ui/button"
+import { formatPeriod } from "@/lib/period"
+import type { SectionName } from "@/resume/schema"
+
+const { resume, labels } = site
+
+const join = (...parts: (string | undefined)[]) =>
+  parts.filter(Boolean).join(" · ") || undefined
 
 function Toolbar() {
   const { setTheme } = useTheme()
@@ -22,7 +30,7 @@ function Toolbar() {
         <a
           className={buttonVariants({ variant: "outline", size: "sm" })}
           href="resume.pdf"
-          download
+          download={`${resume.basics.name}.pdf`}
         >
           <Download data-icon="inline-start" />
           PDF
@@ -32,7 +40,7 @@ function Toolbar() {
         variant="ghost"
         size="icon-sm"
         onClick={toggleTheme}
-        aria-label="Переключить тему"
+        aria-label="Toggle theme"
       >
         <Sun className="hidden dark:block" />
         <Moon className="dark:hidden" />
@@ -41,73 +49,105 @@ function Toolbar() {
   )
 }
 
-export function App() {
-  const { contact, summary, jobs, education, skills } = resume
+/** Section bodies; a falsy result hides a section that has no content. */
+const sections: Record<SectionName, () => ReactNode> = {
+  summary: () =>
+    resume.basics.summary && <Markdown html={resume.basics.summary} />,
 
+  work: () =>
+    resume.work.length > 0 &&
+    resume.work.map((job) => (
+      <TimelineItem
+        key={`${job.name}-${job.startDate}`}
+        title={
+          <>
+            {job.position} · <TitleLink url={job.url}>{job.name}</TitleLink>
+          </>
+        }
+        subtitle={join(job.description, job.location)}
+        period={formatPeriod(job, labels.present)}
+        summary={job.summary}
+        highlights={job.highlights}
+        tags={job.keywords}
+      />
+    )),
+
+  projects: () =>
+    resume.projects.length > 0 &&
+    resume.projects.map((project) => (
+      <TimelineItem
+        key={project.name}
+        title={<TitleLink url={project.url}>{project.name}</TitleLink>}
+        subtitle={join(project.roles.join(", "), project.entity)}
+        period={formatPeriod(project, labels.present)}
+        summary={project.description}
+        highlights={project.highlights}
+        tags={project.keywords}
+      />
+    )),
+
+  skills: () =>
+    resume.skills.length > 0 && (
+      <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
+        {resume.skills.map((skill) => (
+          <div key={skill.name} className="contents">
+            <dt className="font-semibold">{skill.name}</dt>
+            <dd className="text-muted-foreground">
+              {join(skill.keywords.join(", "), skill.level)}
+            </dd>
+          </div>
+        ))}
+      </dl>
+    ),
+
+  education: () =>
+    resume.education.length > 0 &&
+    resume.education.map((item) => (
+      <TimelineItem
+        key={`${item.institution}-${item.startDate}`}
+        title={<TitleLink url={item.url}>{item.institution}</TitleLink>}
+        subtitle={join(
+          [item.studyType, item.area].filter(Boolean).join(", "),
+          item.score
+        )}
+        period={formatPeriod(item, labels.present)}
+        tags={item.courses}
+      />
+    )),
+
+  languages: () =>
+    resume.languages.length > 0 && (
+      <ul className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+        {resume.languages.map((item) => (
+          <li key={item.language}>
+            <span className="font-semibold">{item.language}</span>
+            {item.fluency && (
+              <span className="text-muted-foreground"> — {item.fluency}</span>
+            )}
+          </li>
+        ))}
+      </ul>
+    ),
+}
+
+export function App() {
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-10 print:max-w-none print:p-0">
-      <title>{`${contact.name} — ${contact.title}`}</title>
-
       <div className="flex items-start justify-between gap-4">
-        <ContactHeader contact={contact} />
+        <ContactHeader basics={resume.basics} />
         <Toolbar />
       </div>
 
-      <Section title={summary.title}>
-        <Markdown html={summary.body} />
-      </Section>
-
-      <Section title={jobs.title}>
-        {jobs.items.map((job) => (
-          <TimelineItem
-            key={`${job.company}-${job.start}`}
-            title={
-              <>
-                {job.position} ·{" "}
-                {job.url ? (
-                  <a
-                    className="underline-offset-4 hover:underline"
-                    href={job.url}
-                  >
-                    {job.company}
-                  </a>
-                ) : (
-                  job.company
-                )}
-              </>
-            }
-            subtitle={job.location}
-            period={job}
-            tags={job.stack}
-            description={job.description}
-          />
-        ))}
-      </Section>
-
-      <Section title={skills.title}>
-        <dl className="grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-          {skills.groups.map((group) => (
-            <div key={group.name} className="contents">
-              <dt className="font-semibold">{group.name}</dt>
-              <dd className="text-muted-foreground">
-                {group.items.join(", ")}
-              </dd>
-            </div>
-          ))}
-        </dl>
-      </Section>
-
-      <Section title={education.title}>
-        {education.items.map((item) => (
-          <TimelineItem
-            key={`${item.institution}-${item.start}`}
-            title={item.institution}
-            subtitle={[item.degree, item.field].filter(Boolean).join(", ")}
-            period={item}
-            description={item.description}
-          />
-        ))}
-      </Section>
+      {site.sections.map((name) => {
+        const content = sections[name]()
+        return (
+          content && (
+            <Section key={name} title={labels[name]}>
+              {content}
+            </Section>
+          )
+        )
+      })}
     </main>
   )
 }

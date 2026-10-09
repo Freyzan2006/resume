@@ -1,0 +1,13 @@
+# yaml-language-server: $schema=../schemas/config.schema.json
+#
+# Настройки сайта. Файл необязательный: без него действуют значения по умолчанию.
+
+# Язык сайта. Для ru и en подписи разделов встроены.
+lang: ru
+
+# Какие разделы показывать и в каком порядке.
+sections: [summary, work, projects, skills, education, languages]
+
+# Свои подписи вместо встроенных, например:
+# labels:
+#   work: Карьера

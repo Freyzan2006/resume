@@ -1,4 +1,4 @@
-import { Link, Mail, MapPin, Phone } from "lucide-react"
+import { Globe, Link, Mail, MapPin, Phone } from "lucide-react"
 import type { ReactNode } from "react"
 
 import type { Resume } from "@/resume/schema"
@@ -14,39 +14,62 @@ function Item({ icon, children }: { icon: ReactNode; children: ReactNode }) {
 
 const linkClassName = "underline-offset-4 hover:underline"
 
-export function ContactHeader({ contact }: { contact: Resume["contact"] }) {
+function formatLocation(location: Resume["basics"]["location"]) {
+  if (!location) {
+    return undefined
+  }
+  const place = [location.city, location.region].filter(Boolean).join(", ")
+  return place || location.countryCode
+}
+
+export function ContactHeader({ basics }: { basics: Resume["basics"] }) {
+  const location = formatLocation(basics.location)
+
   return (
     <header className="flex flex-col gap-3">
       <div>
         <h1 className="font-heading text-3xl font-bold tracking-tight">
-          {contact.name}
+          {basics.name}
         </h1>
-        <p className="text-lg text-muted-foreground">{contact.title}</p>
+        {basics.label && (
+          <p className="text-lg text-muted-foreground">{basics.label}</p>
+        )}
       </div>
       <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
-        {contact.location && <Item icon={<MapPin />}>{contact.location}</Item>}
-        {contact.email && (
+        {location && <Item icon={<MapPin />}>{location}</Item>}
+        {basics.email && (
           <Item icon={<Mail />}>
-            <a className={linkClassName} href={`mailto:${contact.email}`}>
-              {contact.email}
+            <a className={linkClassName} href={`mailto:${basics.email}`}>
+              {basics.email}
             </a>
           </Item>
         )}
-        {contact.phone && (
+        {basics.phone && (
           <Item icon={<Phone />}>
             <a
               className={linkClassName}
-              href={`tel:${contact.phone.replace(/[^\d+]/g, "")}`}
+              href={`tel:${basics.phone.replace(/[^\d+]/g, "")}`}
             >
-              {contact.phone}
+              {basics.phone}
             </a>
           </Item>
         )}
-        {contact.links.map((link) => (
-          <Item key={link.url} icon={<Link />}>
-            <a className={linkClassName} href={link.url}>
-              {link.label}
+        {basics.url && (
+          <Item icon={<Globe />}>
+            <a className={linkClassName} href={basics.url}>
+              {basics.url.replace(/^https?:\/\//, "").replace(/\/$/, "")}
             </a>
+          </Item>
+        )}
+        {basics.profiles.map((profile) => (
+          <Item key={profile.network} icon={<Link />}>
+            {profile.url ? (
+              <a className={linkClassName} href={profile.url}>
+                {profile.network}
+              </a>
+            ) : (
+              `${profile.network}: ${profile.username ?? ""}`
+            )}
           </Item>
         ))}
       </ul>

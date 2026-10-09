@@ -1,6 +1,6 @@
 declare module "virtual:resume" {
-  import type { Resume } from "@/resume/schema"
+  import type { SiteData } from "@/resume/schema"
 
-  const resume: Resume
-  export default resume
+  const site: SiteData
+  export default site
 }

@@ -4,16 +4,25 @@ import { formatPeriod } from "./period.ts"
 
 describe("formatPeriod", () => {
   it("formats a closed period", () => {
-    expect(formatPeriod({ start: "2019-09", end: "2022-02" }, "ru")).toBe(
-      "09.2019 — 02.2022"
+    expect(
+      formatPeriod({ startDate: "2019-09", endDate: "2022-02" }, "now")
+    ).toBe("09.2019 — 02.2022")
+  })
+
+  it("uses the present label for a missing endDate", () => {
+    expect(formatPeriod({ startDate: "2022-03" }, "по наст. время")).toBe(
+      "03.2022 — по наст. время"
     )
   })
 
-  it("localizes an open period", () => {
-    const period = { start: "2022-03", end: "present" } as const
+  it("supports year-only and full dates", () => {
+    expect(
+      formatPeriod({ startDate: "2015", endDate: "2019-06-30" }, "now")
+    ).toBe("2015 — 06.2019")
+  })
 
-    expect(formatPeriod(period, "ru")).toBe("03.2022 — по наст. время")
-    expect(formatPeriod(period, "en")).toBe("03.2022 — present")
-    expect(formatPeriod(period, "de")).toBe("03.2022 — present")
+  it("handles missing dates", () => {
+    expect(formatPeriod({}, "now")).toBeUndefined()
+    expect(formatPeriod({ endDate: "2020" }, "now")).toBe("2020")
   })
 })

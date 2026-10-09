@@ -14,3 +14,8 @@ const processor = unified()
 export function renderMarkdown(source: string): string {
   return String(processor.processSync(source)).trim()
 }
+
+/** Like renderMarkdown, but without the wrapping <p> of a single paragraph. */
+export function renderInlineMarkdown(source: string): string {
+  return renderMarkdown(source).replace(/^<p>([\s\S]*)<\/p>$/, "$1")
+}
