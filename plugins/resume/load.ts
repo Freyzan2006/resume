@@ -4,6 +4,7 @@ import { join } from "node:path"
 import { parse } from "yaml"
 import { z } from "zod"
 
+import { downloadsFor } from "../../src/resume/formats.ts"
 import { resolveLabels } from "../../src/resume/labels.ts"
 import {
   configSchema,
@@ -11,6 +12,8 @@ import {
   unrenderedSections,
   type SiteData,
 } from "../../src/resume/schema.ts"
+
+export const ASSETS_DIR = "assets"
 
 // YAML 1.2 is a superset of JSON, so an existing JSON Resume file works as is.
 export const RESUME_FILES = ["resume.yaml", "resume.yml", "resume.json"]
@@ -67,10 +70,11 @@ function validate<T extends z.ZodType>(
 /**
  * Reads, validates and renders assets/resume.* and the optional
  * assets/config.*. Throws a ResumeError listing every problem at once.
+ * `source` is the resume as written (markdown not rendered), for exporters.
  */
 export async function loadSite(
   dir: string
-): Promise<{ data: SiteData; warnings: string[] }> {
+): Promise<{ data: SiteData; source: unknown; warnings: string[] }> {
   const problems: string[] = []
 
   const resumeSource = await readSource(dir, RESUME_FILES, problems)
@@ -87,7 +91,7 @@ export async function loadSite(
     ? validate(configSchema, configSource, problems)
     : configSchema.parse({})
 
-  if (problems.length > 0 || !resume || !config) {
+  if (problems.length > 0 || !resumeSource || !resume || !config) {
     throw new ResumeError(problems)
   }
 
@@ -103,7 +107,9 @@ export async function loadSite(
       lang: config.lang,
       sections: config.sections,
       labels: resolveLabels(config),
+      downloads: downloadsFor(config.formats, resume.basics.name),
     },
+    source: resumeSource.value,
     warnings,
   }
 }

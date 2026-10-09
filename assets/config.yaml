@@ -8,6 +8,9 @@ lang: ru
 # Какие разделы показывать и в каком порядке.
 sections: [summary, work, projects, skills, education, languages]
 
+# В каких форматах резюме можно скачать с сайта: pdf, json (JSON Resume).
+formats: [pdf, json]
+
 # Свои подписи вместо встроенных, например:
 # labels:
 #   work: Карьера

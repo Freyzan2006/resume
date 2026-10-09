@@ -9,6 +9,7 @@ const builtInLabels: Record<string, Labels> = {
     education: "Образование",
     languages: "Языки",
     present: "по наст. время",
+    download: "Скачать",
   },
   en: {
     summary: "Summary",
@@ -18,6 +19,7 @@ const builtInLabels: Record<string, Labels> = {
     education: "Education",
     languages: "Languages",
     present: "present",
+    download: "Download",
   },
 }
 

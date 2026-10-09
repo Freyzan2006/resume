@@ -1,5 +1,6 @@
 import { z } from "zod"
 
+import { formatNames, type Download } from "./formats.ts"
 import { renderInlineMarkdown, renderMarkdown } from "./markdown.ts"
 
 // assets/resume.yaml follows the JSON Resume schema (https://jsonresume.org/schema)
@@ -150,7 +151,7 @@ export const sectionNames = [
 
 export type SectionName = (typeof sectionNames)[number]
 
-export const labelNames = [...sectionNames, "present"] as const
+export const labelNames = [...sectionNames, "present", "download"] as const
 
 export type Labels = Record<(typeof labelNames)[number], string>
 
@@ -165,6 +166,10 @@ export const configSchema = z.strictObject({
     .array(z.enum(sectionNames))
     .default([...sectionNames])
     .describe("Какие разделы показывать и в каком порядке"),
+  formats: z
+    .array(z.enum(formatNames))
+    .default(["pdf"])
+    .describe("В каких форматах резюме можно скачать с сайта"),
   labels: z
     .partialRecord(z.enum(labelNames), text)
     .default({})
@@ -182,4 +187,5 @@ export type SiteData = {
   lang: string
   sections: SectionName[]
   labels: Labels
+  downloads: Download[]
 }

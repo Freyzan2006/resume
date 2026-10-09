@@ -106,6 +106,29 @@ describe("loadSite", () => {
     expect(data.labels).toMatchObject({ work: "Career", skills: "Skills" })
   })
 
+  it("lists downloads for the configured formats, PDF by default", async () => {
+    await write("config.yaml", "formats: [json, pdf]")
+    expect((await loadSite(dir)).data.downloads).toEqual([
+      {
+        format: "json",
+        label: "JSON Resume",
+        href: "resume.json",
+        filename: "Иван Иванов.json",
+      },
+      expect.objectContaining({ format: "pdf", href: "resume.pdf" }),
+    ])
+
+    await rm(join(dir, "config.yaml"))
+    const { downloads } = (await loadSite(dir)).data
+    expect(downloads.map((item) => item.format)).toEqual(["pdf"])
+  })
+
+  it("rejects unknown formats", async () => {
+    await write("config.yaml", "formats: [docx]")
+
+    expect((await problemsOf(loadSite(dir))).join()).toMatch(/formats/)
+  })
+
   it("reports a missing resume file", async () => {
     await rm(join(dir, "resume.yaml"))
 

@@ -1,12 +1,13 @@
-import { Download, Moon, Sun } from "lucide-react"
+import { Moon, Sun } from "lucide-react"
 import type { ReactNode } from "react"
 import site from "virtual:resume"
 
 import { ContactHeader } from "@/components/resume/contact-header"
+import { Downloads } from "@/components/resume/downloads"
 import { Markdown, Section } from "@/components/resume/section"
 import { TimelineItem, TitleLink } from "@/components/resume/timeline"
 import { useTheme } from "@/components/theme-provider"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { Button } from "@/components/ui/button"
 import { formatPeriod } from "@/lib/period"
 import type { SectionName } from "@/resume/schema"
 
@@ -25,16 +26,9 @@ function Toolbar() {
 
   return (
     <div className="flex gap-2 print:hidden">
-      {/* resume.pdf is printed from the build, so it only exists in prod. */}
+      {/* Exported files are written after `vite build`, so prod only. */}
       {import.meta.env.PROD && (
-        <a
-          className={buttonVariants({ variant: "outline", size: "sm" })}
-          href="resume.pdf"
-          download={`${resume.basics.name}.pdf`}
-        >
-          <Download data-icon="inline-start" />
-          PDF
-        </a>
+        <Downloads downloads={site.downloads} label={labels.download} />
       )}
       <Button
         variant="ghost"

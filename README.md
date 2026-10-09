@@ -8,7 +8,7 @@
 | Файл                 | Содержимое                                                            |
 | -------------------- | --------------------------------------------------------------------- |
 | `assets/resume.yaml` | Резюме в формате [JSON Resume](https://jsonresume.org/schema), в YAML |
-| `assets/config.yaml` | Необязательные настройки: `lang`, порядок `sections`, свои `labels`   |
+| `assets/config.yaml` | Необязательные настройки: `lang`, `sections`, `formats`, `labels`     |
 
 - Можно положить готовый `resume.json` из JSON Resume вместо `resume.yaml` —
   YAML 1.2 читает JSON как есть.
@@ -27,15 +27,30 @@ VS Code подсказывает поля и подчёркивает ошибк
 
 ```sh
 bun run dev         # сайт с live-reload при правке assets/
-bun run build       # dist/ + dist/resume.pdf
+bun run build       # dist/ + файлы для скачивания (resume.pdf, resume.json…)
 bun run build:site  # только сайт, без PDF
-bun run pdf         # только PDF из уже собранного dist/
+bun run export      # только файлы для скачивания из уже собранного dist/
 bun run test        # vitest
 bun run schema      # перегенерировать schemas/ после правки схем
 ```
 
-PDF печатает headless Chromium через Playwright. Браузер ищется так:
-`$CHROMIUM_PATH` → системный Chromium/Chrome → `bunx playwright install chromium`.
+## Форматы скачивания
+
+`formats` в `config.yaml` (по умолчанию `[pdf]`) задаёт, какие файлы собираются
+в `dist/` и какие кнопки появляются на сайте:
+
+| Формат | Файл          | Что это                                                        |
+| ------ | ------------- | -------------------------------------------------------------- |
+| `pdf`  | `resume.pdf`  | Сайт, распечатанный headless Chromium (стили `print:`)         |
+| `json` | `resume.json` | JSON Resume: подходит для тем jsonresume.org и других сервисов |
+
+PDF ищет браузер так: `$CHROMIUM_PATH` → системный Chromium/Chrome →
+`bunx playwright install chromium`.
+
+Новый формат: добавить его в `src/resume/formats.ts`, написать экспортёр в
+`exporters/` (функция `Exporter` из `exporters/types.ts`) и зарегистрировать в
+`exporters/index.ts` — TypeScript не даст забыть последний шаг. Затем
+`bun run schema`, чтобы редактор узнал новое значение `formats`.
 
 ## Деплой
 

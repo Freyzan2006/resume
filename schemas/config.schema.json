@@ -34,6 +34,20 @@
         ]
       }
     },
+    "formats": {
+      "default": [
+        "pdf"
+      ],
+      "description": "В каких форматах резюме можно скачать с сайта",
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "pdf",
+          "json"
+        ]
+      }
+    },
     "labels": {
       "default": {},
       "description": "Свои подписи разделов вместо встроенных",
@@ -47,7 +61,8 @@
           "skills",
           "education",
           "languages",
-          "present"
+          "present",
+          "download"
         ]
       },
       "additionalProperties": {
