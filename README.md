@@ -85,7 +85,8 @@ src/
     app/             точка входа, оболочка страницы, стили
     sections/        по компоненту на раздел резюме + реестр index.ts
     features/        download, language, theme (состояние на reatom)
-    ui/              компоненты shadcn/ui
+    ui/              компоненты shadcn/ui и typography.tsx (роли текста)
+    lib/utils.ts     cn, знающий роли текста
 ```
 
 Зависимости идут только так: `build → core` и `web → core`. Из схем
@@ -99,6 +100,13 @@ src/
   DOM, в `web` нет Node;
 - `bun run lint` (`no-restricted-imports` в `eslint.config.js`) запрещает
   импорты против направления слоёв и зависимости сборки в `web`.
+
+Типографика задаётся ролями, а не размерами: `display`, `lead`, `heading`,
+`title`, `copy`, `annotation`, `label` — компонент `<Text variant>` из
+`src/web/ui/typography.tsx`. Размеры, интерлиньяж и насыщенность — токены
+`--text-<роль>` в `src/web/app/index.css`, с отдельной шкалой для печати
+(`@media print`). Основной текст набран Inter, имя, заголовки и аннотации —
+JetBrains Mono.
 
 Новый раздел резюме: имя в `sectionNames` (`src/core/config-schema.ts`),
 подписи в `src/core/labels.ts`, компонент в `src/web/sections/` и запись в

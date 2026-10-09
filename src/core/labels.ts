@@ -11,6 +11,8 @@ const builtInLabels: Record<string, Labels> = {
     languages: "Языки",
     present: "по наст. время",
     download: "Скачать",
+    year: "г.",
+    month: "мес.",
   },
   en: {
     summary: "Summary",
@@ -22,6 +24,22 @@ const builtInLabels: Record<string, Labels> = {
     languages: "Languages",
     present: "present",
     download: "Download",
+    year: "yr",
+    month: "mo",
+  },
+  // Uzbek, Latin script: ʻ (U+02BB) in oʻ/gʻ, ʼ (U+02BC) as tutuq belgisi.
+  uz: {
+    summary: "Oʻzim haqimda",
+    work: "Ish tajribasi",
+    projects: "Loyihalar",
+    skills: "Koʻnikmalar",
+    education: "Taʼlim",
+    certificates: "Sertifikatlar",
+    languages: "Tillar",
+    present: "hozirgacha",
+    download: "Yuklab olish",
+    year: "yil",
+    month: "oy",
   },
 }
 

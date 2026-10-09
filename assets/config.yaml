@@ -7,15 +7,14 @@
 #   <профиль>/resume.<язык>.yaml   по папке на специальность, по файлу на язык
 
 # Какое резюме собирать — папка в assets/. Можно не указывать, если папка одна.
-profile: devops
+profile: frontend
 
 # Основной язык: его версия открывается по умолчанию. Остальные языки берутся
 # из файлов resume.<язык>.yaml профиля и переключаются на сайте.
 lang: ru
 
 # Какие разделы показывать и в каком порядке.
-sections:
-  [summary, work, projects, skills, education, certificates, languages]
+sections: [summary, work, projects, skills, education, certificates, languages]
 
 # В каких форматах резюме можно скачать с сайта: pdf, json (JSON Resume).
 formats: [pdf, json]

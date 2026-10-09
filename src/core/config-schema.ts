@@ -18,7 +18,14 @@ export const sectionNames = [
 
 export type SectionName = (typeof sectionNames)[number]
 
-export const labelNames = [...sectionNames, "present", "download"] as const
+export const labelNames = [
+  ...sectionNames,
+  "present",
+  "download",
+  // Duration units, used only where the browser's Intl lacks the language.
+  "year",
+  "month",
+] as const
 
 export type Labels = Record<(typeof labelNames)[number], string>
 

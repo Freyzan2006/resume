@@ -11,21 +11,20 @@ export const App = reatomComponent(() => {
   const current = locale()
 
   return (
-    <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-10 print:max-w-none print:p-0">
-      <div className="flex flex-wrap-reverse items-start justify-between gap-4">
-        <Header basics={current.resume.basics} />
-        <div className="flex gap-2 print:hidden">
-          <LanguageSwitcher />
-          {/* Exported files are written after `vite build`, so prod only. */}
-          {import.meta.env.PROD && (
-            <Downloads
-              downloads={current.downloads}
-              label={current.labels.download}
-            />
-          )}
-          <ThemeToggle />
-        </div>
+    <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-10 print:max-w-none print:gap-5 print:p-0">
+      <div className="-mb-4 flex justify-end gap-2 print:hidden">
+        <LanguageSwitcher />
+        {/* Exported files are written after `vite build`, so prod only. */}
+        {import.meta.env.PROD && (
+          <Downloads
+            downloads={current.downloads}
+            label={current.labels.download}
+          />
+        )}
+        <ThemeToggle />
       </div>
+
+      <Header basics={current.resume.basics} />
 
       {site.sections.map((name) => {
         const SectionComponent = sections[name]

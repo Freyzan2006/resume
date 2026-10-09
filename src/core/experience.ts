@@ -52,24 +52,41 @@ export function totalMonths(periods: Period[], now: Date): number {
   return total
 }
 
+type DurationOptions = {
+  display?: "long" | "short"
+  /** Words for languages the runtime's Intl has no unit names for. */
+  units?: { year: string; month: string }
+}
+
 /**
  * 79 months → "6 лет 7 месяцев" / "6 years 7 months" (or "6 г. 7 мес." when
- * short). Plural forms come from Intl, so any language works.
+ * short). Plural forms come from Intl. Browsers may lack unit names for some
+ * languages (Chrome has none for Uzbek) and silently answer in English; then
+ * `units` are used instead: "6 yil 7 oy".
  */
 export function formatDuration(
   months: number,
   lang: string,
-  display: "long" | "short" = "long"
+  { display = "long", units }: DurationOptions = {}
 ): string {
-  const years = Math.floor(months / 12)
-  const rest = months % 12
-  const unit = (value: number, name: "year" | "month") =>
-    new Intl.NumberFormat(lang, {
+  const format = (locale: string, value: number, unit: "year" | "month") =>
+    new Intl.NumberFormat(locale, {
       style: "unit",
-      unit: name,
+      unit,
       unitDisplay: display,
     }).format(value)
 
+  const isEnglish = lang.split("-")[0] === "en"
+  const intlFallsBack =
+    !isEnglish && format(lang, 7, "year") === format("en", 7, "year")
+
+  const unit = (value: number, name: "year" | "month") =>
+    units && intlFallsBack
+      ? `${value} ${units[name]}`
+      : format(lang, value, name)
+
+  const years = Math.floor(months / 12)
+  const rest = months % 12
   const parts = []
   if (years > 0) parts.push(unit(years, "year"))
   if (rest > 0 || years === 0) parts.push(unit(rest, "month"))

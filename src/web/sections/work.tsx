@@ -19,7 +19,7 @@ export function WorkSection({
     <Section
       title={joinParts(
         labels.work,
-        total > 0 ? formatDuration(total, lang) : undefined
+        total > 0 ? formatDuration(total, lang, { units: labels }) : undefined
       )!}
     >
       {resume.work.map((job) => {
@@ -35,7 +35,12 @@ export function WorkSection({
             subtitle={joinParts(job.description, job.location)}
             period={joinParts(
               formatPeriod(job, labels.present),
-              months > 0 ? formatDuration(months, lang, "short") : undefined
+              months > 0
+                ? formatDuration(months, lang, {
+                    display: "short",
+                    units: labels,
+                  })
+                : undefined
             )}
             summary={job.summary}
             highlights={job.highlights}

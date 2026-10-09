@@ -2,6 +2,7 @@ import { Globe, Link, Mail, MapPin, Phone } from "lucide-react"
 import type { ReactNode } from "react"
 
 import type { Resume } from "@/core/resume-schema"
+import { Text } from "@/web/ui/typography"
 
 function Item({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (
@@ -36,14 +37,14 @@ export function Header({ basics }: { basics: Resume["basics"] }) {
       )}
       <div className="flex flex-col gap-3">
         <div>
-          <h1 className="font-heading text-3xl font-bold tracking-tight">
-            {basics.name}
-          </h1>
-          {basics.label && (
-            <p className="text-lg text-muted-foreground">{basics.label}</p>
-          )}
+          <Text variant="display">{basics.name}</Text>
+          {basics.label && <Text variant="lead">{basics.label}</Text>}
         </div>
-        <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm">
+        <Text
+          variant="annotation"
+          render={<ul />}
+          className="flex flex-wrap gap-x-5 gap-y-1.5 text-foreground"
+        >
           {location && <Item icon={<MapPin />}>{location}</Item>}
           {basics.email && (
             <Item icon={<Mail />}>
@@ -80,7 +81,7 @@ export function Header({ basics }: { basics: Resume["basics"] }) {
               )}
             </Item>
           ))}
-        </ul>
+        </Text>
       </div>
     </header>
   )

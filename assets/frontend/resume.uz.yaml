@@ -1,0 +1,78 @@
+# yaml-language-server: $schema=../../schemas/resume.schema.json
+#
+# resume.ru.yaml ning oʻzbekcha (lotin yozuvi) versiyasi — JSON Resume tuzilmasi bir xil.
+
+basics:
+  name: Ivan Ivanov
+  label: Frontend-dasturchi
+  image: ../photo.svg
+  email: ivan@example.com
+  phone: "+7 900 000-00-00"
+  location:
+    city: Moskva
+    countryCode: RU
+  summary: |
+    **5 yildan ortiq** tajribaga ega frontend-dasturchi. React va TypeScript
+    yordamida tez va qulay interfeyslar yarataman, qatʼiy tiplashtirish va
+    tushunarli arxitekturani yoqtiraman.
+  profiles:
+    - network: GitHub
+      username: example
+      url: https://github.com/example
+    - network: Telegram
+      username: example
+      url: https://t.me/example
+
+work:
+  - name: «Namuna» MChJ
+    position: Senior Frontend Developer
+    location: Masofaviy
+    url: https://example.com
+    startDate: 2022-03
+    highlights:
+      - Monolit SPA ni modulli arxitekturaga oʻtkazdim
+      - Birinchi yuklanish vaqtini **40%** ga qisqartirdim
+    keywords: [React, TypeScript, Reatom, Vite]
+
+  - name: «Zaglushka» studiyasi
+    position: Frontend Developer
+    startDate: 2019-09
+    endDate: 2022-02
+    summary: |
+      Mijozlar uchun loyihalar: landing sahifalardan shaxsiy kabinetlargacha.
+    keywords: [React, Redux, SCSS]
+
+projects:
+  - name: Resume
+    description: Bitta YAML fayldan yigʻiladigan rezyume sayti va PDF.
+    url: https://github.com/example/resume
+    keywords: [React, Vite, Playwright]
+
+skills:
+  - name: Dasturlash tillari
+    keywords: [TypeScript, JavaScript, HTML, CSS]
+  - name: Freymvorklar
+    keywords: [React, Reatom, Tailwind CSS]
+  - name: Vositalar
+    keywords: [Vite, Vitest, Playwright, Git]
+
+education:
+  - institution: Moskva universiteti
+    studyType: Bakalavr
+    area: Amaliy informatika
+    startDate: 2015-09
+    endDate: 2019-06
+
+certificates:
+  - name: Advanced React Patterns
+    issuer: Frontend Masters
+    date: 2023-05
+    url: https://frontendmasters.com
+
+languages:
+  - language: Rus tili
+    fluency: ona tili
+  - language: Ingliz tili
+    fluency: B2
+  - language: Oʻzbek tili
+    fluency: B1

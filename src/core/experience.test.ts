@@ -67,6 +67,7 @@ describe("formatDuration", () => {
     expect(formatDuration(79, "ru")).toBe("6 лет 7 месяцев")
     expect(formatDuration(13, "ru")).toBe("1 год 1 месяц")
     expect(formatDuration(79, "en")).toBe("6 years 7 months")
+    expect(formatDuration(86, "uz")).toBe("7 yil 2 oy")
   })
 
   it("omits empty parts but never returns nothing", () => {
@@ -75,6 +76,14 @@ describe("formatDuration", () => {
   })
 
   it("has a short form", () => {
-    expect(formatDuration(31, "ru", "short")).toBe("2 г. 7 мес.")
+    expect(formatDuration(31, "ru", { display: "short" })).toBe("2 г. 7 мес.")
+  })
+
+  it("uses the given units where Intl answers in English instead", () => {
+    // Pretends Intl has no Uzbek unit names, as in Chrome.
+    const units = { year: "yil", month: "oy" }
+    expect(formatDuration(86, "xx", { units })).toBe("7 yil 2 oy")
+    expect(formatDuration(86, "ru", { units })).toBe("7 лет 2 месяца")
+    expect(formatDuration(86, "en", { units })).toBe("7 years 2 months")
   })
 })

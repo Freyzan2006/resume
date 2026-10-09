@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 
 import { Markdown } from "./section"
 import { Badge } from "@/web/ui/badge"
+import { Text } from "@/web/ui/typography"
 
 export function TimelineItem({
   title,
@@ -22,16 +23,20 @@ export function TimelineItem({
   tags?: string[]
 }) {
   return (
-    <article className="flex break-inside-avoid flex-col gap-1.5">
+    <article className="flex break-inside-avoid flex-col gap-1.5 print:gap-1">
       <div className="flex flex-wrap items-baseline justify-between gap-x-4">
-        <h3 className="font-semibold">{title}</h3>
+        <Text variant="title">{title}</Text>
         {period && (
-          <span className="ml-auto text-xs whitespace-nowrap text-muted-foreground tabular-nums">
+          <Text variant="annotation" className="ml-auto whitespace-nowrap">
             {period}
-          </span>
+          </Text>
         )}
       </div>
-      {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
+      {subtitle && (
+        <Text variant="annotation" render={<p />}>
+          {subtitle}
+        </Text>
+      )}
       {summary && <Markdown html={summary} />}
       {highlights.length > 0 && (
         <Markdown
@@ -42,7 +47,9 @@ export function TimelineItem({
         <ul className="flex flex-wrap gap-1.5">
           {tags.map((tag) => (
             <li key={tag}>
-              <Badge variant="secondary">{tag}</Badge>
+              <Badge variant="secondary" className="font-mono">
+                {tag}
+              </Badge>
             </li>
           ))}
         </ul>

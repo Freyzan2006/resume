@@ -76,7 +76,9 @@
             "certificates",
             "languages",
             "present",
-            "download"
+            "download",
+            "year",
+            "month"
           ]
         },
         "additionalProperties": {

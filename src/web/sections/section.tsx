@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 
 import type { Locale } from "@/core/site"
 import { Separator } from "@/web/ui/separator"
+import { Text } from "@/web/ui/typography"
 
 /** Every section gets the whole language version and picks what it renders. */
 export type SectionProps = { locale: Locale }
@@ -18,11 +19,11 @@ export function Section({
   children: ReactNode
 }) {
   return (
-    <section className="flex break-inside-avoid-page flex-col gap-4">
+    <section className="flex break-inside-avoid-page flex-col gap-4 print:gap-2.5">
       <div className="flex items-center gap-3">
-        <h2 className="font-heading text-xs font-semibold tracking-widest whitespace-nowrap text-muted-foreground uppercase">
+        <Text variant="heading" className="whitespace-nowrap">
           {title}
-        </h2>
+        </Text>
         <Separator className="flex-1" />
       </div>
       {children}
@@ -32,10 +33,5 @@ export function Section({
 
 /** Markdown rendered to HTML at build time from assets/ (trusted content). */
 export function Markdown({ html }: { html: string }) {
-  return (
-    <div
-      className="prose prose-sm max-w-none text-foreground prose-zinc dark:prose-invert prose-p:my-1.5 prose-a:text-foreground prose-strong:text-foreground prose-ul:my-1.5 prose-li:my-0.5"
-      dangerouslySetInnerHTML={{ __html: html }}
-    />
-  )
+  return <div className="markdown" dangerouslySetInnerHTML={{ __html: html }} />
 }

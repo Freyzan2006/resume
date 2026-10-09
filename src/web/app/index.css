@@ -1,9 +1,8 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "@fontsource-variable/inter";
 @import "@fontsource-variable/jetbrains-mono";
-
-@plugin "@tailwindcss/typography";
 
 @page {
   size: A4;
@@ -12,9 +11,57 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/*
+ * Typography roles (see src/web/ui/typography.tsx). Each becomes a `text-<role>`
+ * utility with its own size, line height, weight and tracking. Screen and print
+ * scales differ: the print one is what fits a resume on A4.
+ */
+@theme {
+  --text-display: 1.875rem;
+  --text-display--line-height: 1.15;
+  --text-display--font-weight: 700;
+  --text-display--letter-spacing: -0.02em;
+
+  --text-lead: 1.125rem;
+  --text-lead--line-height: 1.4;
+
+  --text-heading: 0.75rem;
+  --text-heading--line-height: 1rem;
+  --text-heading--font-weight: 600;
+  --text-heading--letter-spacing: 0.12em;
+
+  --text-title: 1rem;
+  --text-title--line-height: 1.4;
+  --text-title--font-weight: 600;
+
+  --text-copy: 0.9375rem;
+  --text-copy--line-height: 1.6;
+
+  --text-annotation: 0.75rem;
+  --text-annotation--line-height: 1.4;
+
+  --text-label: 0.875rem;
+  --text-label--line-height: 1.5;
+  --text-label--font-weight: 600;
+}
+
+@media print {
+  :root {
+    --text-display: 22pt;
+    --text-lead: 12pt;
+    --text-heading: 7.5pt;
+    --text-title: 10.5pt;
+    --text-copy: 9.5pt;
+    --text-copy--line-height: 1.45;
+    --text-annotation: 7.5pt;
+    --text-label: 9pt;
+  }
+}
+
 @theme inline {
   --font-heading: var(--font-mono);
-  --font-mono: "JetBrains Mono Variable", monospace;
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono Variable", ui-monospace, monospace;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -132,6 +179,94 @@
     @apply bg-background text-foreground;
   }
   html {
-    @apply font-mono;
+    @apply font-sans;
+  }
+
+  /* Selection in the accent colour of the theme. */
+  ::selection {
+    background-color: var(--primary);
+    color: var(--primary-foreground);
+  }
+  img::selection {
+    background-color: transparent;
+  }
+
+  /*
+   * Scrollbar in muted tones with the theme's corner radius (--radius).
+   * Chrome ignores ::-webkit-scrollbar once scrollbar-color is set, so the
+   * standard properties go only to browsers without it (Firefox), which
+   * cannot round the thumb. The gutter keeps the layout from shifting.
+   */
+  html {
+    scrollbar-gutter: stable;
+  }
+  @supports not selector(::-webkit-scrollbar) {
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: color-mix(
+          in oklch,
+          var(--muted-foreground) 45%,
+          transparent
+        )
+        transparent;
+    }
+  }
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track,
+  ::-webkit-scrollbar-corner {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    border: 3px solid transparent;
+    border-radius: var(--radius);
+    background-clip: content-box;
+    background-color: color-mix(in oklch, var(--muted-foreground) 45%, transparent);
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--muted-foreground);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+}
+
+/* Markdown from assets/, rendered at build time: always the `copy` role. */
+@layer components {
+  .markdown {
+    @apply text-copy;
+  }
+  .markdown > * + * {
+    margin-top: 0.5em;
+  }
+  .markdown ul {
+    list-style: disc;
+    padding-left: 1.25em;
+  }
+  .markdown ol {
+    list-style: decimal;
+    padding-left: 1.5em;
+  }
+  .markdown li + li {
+    margin-top: 0.2em;
+  }
+  .markdown li::marker {
+    color: var(--color-muted-foreground);
+  }
+  .markdown strong {
+    font-weight: 600;
+  }
+  .markdown a {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .markdown code {
+    font-family: var(--font-mono);
+    font-size: 0.9em;
   }
 }

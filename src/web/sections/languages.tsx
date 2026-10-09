@@ -1,3 +1,5 @@
+import { Text } from "@/web/ui/typography"
+
 import { Section, type SectionProps } from "./section"
 
 export function LanguagesSection({ locale: { resume, labels } }: SectionProps) {
@@ -7,13 +9,11 @@ export function LanguagesSection({ locale: { resume, labels } }: SectionProps) {
 
   return (
     <Section title={labels.languages}>
-      <ul className="flex flex-wrap gap-x-6 gap-y-1 text-sm">
+      <ul className="flex flex-wrap items-baseline gap-x-6 gap-y-1">
         {resume.languages.map((item) => (
-          <li key={item.language}>
-            <span className="font-semibold">{item.language}</span>
-            {item.fluency && (
-              <span className="text-muted-foreground"> — {item.fluency}</span>
-            )}
+          <li key={item.language} className="flex items-baseline gap-2">
+            <Text variant="label">{item.language}</Text>
+            {item.fluency && <Text variant="annotation">{item.fluency}</Text>}
           </li>
         ))}
       </ul>

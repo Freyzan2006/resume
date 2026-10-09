@@ -13,6 +13,13 @@ const restrict = (...patterns) => ({
   '@typescript-eslint/no-restricted-imports': ['error', { patterns }],
 })
 
+// `shadcn add` writes `import { cn } from "cn"`; web needs the one that
+// knows the typography roles (see src/web/lib/utils.ts).
+const cnFromUtils = {
+  name: 'cn',
+  message: 'импортируйте cn из "@/web/lib/utils" — он знает роли текста',
+}
+
 const otherLayer = (layer, message) => ({
   group: [`@/${layer}/*`, `**/${layer}/*`],
   message,
@@ -49,24 +56,30 @@ export default defineConfig([
     languageOptions: { globals: globals.browser },
     rules: {
       'react-refresh/only-export-components': 'off',
-      ...restrict(
-        otherLayer('build', 'web не зависит от build'),
+      '@typescript-eslint/no-restricted-imports': [
+        'error',
         {
-          group: ['node:*', 'zod', 'yaml', 'unified', 'remark-*', 'rehype-*'],
-          message: 'зависимости времени сборки не должны попадать в браузер',
-        },
-        {
-          group: [
-            '@/core/resume-schema',
-            '@/core/config-schema',
-            '@/core/markdown',
-            '@/core/labels',
-            '@/core/site',
+          paths: [cnFromUtils],
+          patterns: [
+            otherLayer('build', 'web не зависит от build'),
+            {
+              group: ['node:*', 'zod', 'yaml', 'unified', 'remark-*', 'rehype-*'],
+              message: 'зависимости времени сборки не должны попадать в браузер',
+            },
+            {
+              group: [
+                '@/core/resume-schema',
+                '@/core/config-schema',
+                '@/core/markdown',
+                '@/core/labels',
+                '@/core/site',
+              ],
+              allowTypeImports: true,
+              message: 'из этих модулей core в web — только `import type`',
+            },
           ],
-          allowTypeImports: true,
-          message: 'из этих модулей core в web — только `import type`',
-        }
-      ),
+        },
+      ],
     },
   },
 ])

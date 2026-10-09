@@ -182,6 +182,20 @@ describe("loadSite: languages", () => {
     ])
   })
 
+  it("has built-in labels for ru, en and uz, English for the rest", async () => {
+    await write({
+      "p/resume.ru.yaml": minimal(),
+      "p/resume.uz.yaml": minimal(),
+      "p/resume.de.yaml": minimal(),
+    })
+
+    const labels = (await loadSite(dir)).data.locales.map(
+      (locale) => `${locale.lang}: ${locale.labels.education}`
+    )
+
+    expect(labels).toEqual(["ru: Образование", "de: Education", "uz: Taʼlim"])
+  })
+
   it("applies label overrides only to their language", async () => {
     await write({
       "config.yaml": "labels: { ru: { work: Карьера } }",
