@@ -4,17 +4,17 @@ import { dirname, extname, join, resolve } from "node:path"
 import { parse } from "yaml"
 import { z } from "zod"
 
-import { configSchema, type Config } from "../core/config-schema.ts"
+import { type Config, configSchema } from "../core/config-schema.ts"
 import { downloadsFor } from "../core/formats.ts"
 import { resolveLabels } from "../core/labels.ts"
 import { resumeSchema, unrenderedSections } from "../core/resume-schema.ts"
-import { pageTitle, type Locale, type SiteData } from "../core/site.ts"
+import { type Locale, pageTitle, type SiteData } from "../core/site.ts"
 
 // assets/
 //   config.yaml                      optional: profile, lang, sections, …
 //   <profile>/resume.<lang>.yaml     one folder per specialty, one file per language
 export const ASSETS_DIR = "assets"
-export const CONFIG_FILES = ["config.yaml", "config.yml", "config.json"]
+const CONFIG_FILES = ["config.yaml", "config.yml", "config.json"]
 
 // YAML 1.2 is a superset of JSON, so an existing JSON Resume file works as is.
 const RESUME_FILE =
@@ -207,7 +207,10 @@ export async function loadSite(dir: string): Promise<LoadedSite> {
   const warnings: string[] = []
 
   for (const lang of langs) {
-    const [file] = resumes.get(lang)!
+    const [file] = resumes.get(lang) ?? []
+    if (!file) {
+      continue
+    }
     files.push(file)
 
     const source = await readSource(file, problems)

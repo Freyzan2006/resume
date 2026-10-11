@@ -15,13 +15,13 @@ export function WorkSection({
   const now = new Date()
   const total = totalMonths(resume.work, now)
 
+  const title =
+    total > 0
+      ? `${labels.work} · ${formatDuration(total, lang, { units: labels })}`
+      : labels.work
+
   return (
-    <Section
-      title={joinParts(
-        labels.work,
-        total > 0 ? formatDuration(total, lang, { units: labels }) : undefined
-      )!}
-    >
+    <Section title={title}>
       {resume.work.map((job) => {
         const months = periodMonths(job, now)
         return (

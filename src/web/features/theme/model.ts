@@ -11,9 +11,14 @@ export type Theme = "light" | "dark" | "system"
 
 const prefersDark = reatomMediaQuery("(prefers-color-scheme: dark)")
 
-/** The viewer's choice, remembered in localStorage. */
-export const theme = atom<Theme>("system", "theme").extend(
-  withLocalStorage("theme")
+/**
+ * The viewer's choice, remembered in localStorage. The key is namespaced:
+ * GitHub Pages sites of one account share an origin, and the plain "theme"
+ * key holds a raw string from the template's old provider. The inline script
+ * in index.html reads the same key to apply the theme before the first paint.
+ */
+const theme = atom<Theme>("system", "theme").extend(
+  withLocalStorage("resume.theme")
 )
 
 /** The theme actually shown: "system" follows the OS setting. */

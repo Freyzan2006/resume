@@ -2,7 +2,7 @@ import { relative, resolve, sep } from "node:path"
 import type { Plugin } from "vite"
 
 import { personalizeHtml } from "./html.ts"
-import { loadSite, type LoadedSite } from "./load.ts"
+import { type LoadedSite, loadSite } from "./load.ts"
 
 const VIRTUAL_ID = "virtual:resume"
 const RESOLVED_ID = `\0${VIRTUAL_ID}`

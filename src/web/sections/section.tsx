@@ -1,6 +1,6 @@
 import type { ReactNode } from "react"
 
-import type { Locale } from "@/core/site"
+import type { Locale } from "@/core/types"
 import { Separator } from "@/web/ui/separator"
 import { Text } from "@/web/ui/typography"
 
@@ -33,5 +33,8 @@ export function Section({
 
 /** Markdown rendered to HTML at build time from assets/ (trusted content). */
 export function Markdown({ html }: { html: string }) {
-  return <div className="markdown" dangerouslySetInnerHTML={{ __html: html }} />
+  return (
+    // biome-ignore lint/security/noDangerouslySetInnerHtml: HTML rendered at build time from the site's own assets/, not user input
+    <div className="markdown" dangerouslySetInnerHTML={{ __html: html }} />
+  )
 }

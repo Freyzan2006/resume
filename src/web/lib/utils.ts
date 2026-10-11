@@ -1,7 +1,7 @@
 import { createCn } from "cn/config"
 
 /** Typography roles: `text-<role>` utilities from the tokens in index.css. */
-export const textRoles = [
+const textRoles = [
   "display",
   "lead",
   "heading",

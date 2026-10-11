@@ -1,5 +1,5 @@
-import { computed, effect, searchParamsAtom } from "@reatom/core"
 import site from "virtual:resume"
+import { computed, effect, searchParamsAtom } from "@reatom/core"
 
 const [primary] = site.locales
 const langs = site.locales.map((locale) => locale.lang)

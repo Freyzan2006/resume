@@ -1,6 +1,6 @@
+import site from "virtual:resume"
 import { wrap } from "@reatom/core"
 import { reatomComponent } from "@reatom/react"
-import site from "virtual:resume"
 
 import { Button } from "@/web/ui/button"
 
@@ -15,7 +15,7 @@ export const LanguageSwitcher = reatomComponent(() => {
   const current = lang()
 
   return (
-    <div className="flex" role="group" aria-label="Language">
+    <fieldset className="flex" aria-label="Language">
       {site.locales.map((item) => (
         <Button
           key={item.lang}
@@ -27,6 +27,6 @@ export const LanguageSwitcher = reatomComponent(() => {
           {item.lang.toUpperCase()}
         </Button>
       ))}
-    </div>
+    </fieldset>
   )
 }, "LanguageSwitcher")

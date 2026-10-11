@@ -6,7 +6,7 @@ import { formatNames } from "./formats.ts"
 
 const text = z.string().trim().min(1)
 
-export const sectionNames = [
+const sectionNames = [
   "summary",
   "work",
   "projects",
@@ -18,7 +18,7 @@ export const sectionNames = [
 
 export type SectionName = (typeof sectionNames)[number]
 
-export const labelNames = [
+const labelNames = [
   ...sectionNames,
   "present",
   "download",
@@ -30,10 +30,10 @@ export const labelNames = [
 export type Labels = Record<(typeof labelNames)[number], string>
 
 /** BCP 47-ish language code, as used in resume.<lang>.yaml file names. */
-export const langPattern = /^[a-z]{2,3}(-[A-Za-z0-9]+)*$/
+const langPattern = /^[a-z]{2,3}(-[A-Za-z0-9]+)*$/
 
 /** A profile is a folder in assets/: frontend, devops, … */
-export const profilePattern = /^[a-z0-9][a-z0-9_-]*$/
+const profilePattern = /^[a-z0-9][a-z0-9_-]*$/
 
 export const configSchema = z.strictObject({
   $schema: z.string().optional(),

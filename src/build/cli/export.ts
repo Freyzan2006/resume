@@ -1,7 +1,7 @@
 // Writes every format listed in assets/config.yaml (`formats`) for every
 // language version into dist/. Run after `vite build`.
 import { resolve } from "node:path"
-import { preview, type PreviewServer } from "vite"
+import { type PreviewServer, preview } from "vite"
 
 import { exporters } from "../exporters/index.ts"
 import { ASSETS_DIR, loadSite } from "../load.ts"

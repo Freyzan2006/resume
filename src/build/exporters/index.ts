@@ -8,5 +8,3 @@ export const exporters: Record<FormatName, Exporter> = {
   pdf: exportPdf,
   json: exportJson,
 }
-
-export type { ExportContext, Exporter } from "./types.ts"

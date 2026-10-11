@@ -1,5 +1,5 @@
-import { reatomComponent } from "@reatom/react"
 import site from "virtual:resume"
+import { reatomComponent } from "@reatom/react"
 
 import { Downloads } from "@/web/features/download/downloads"
 import { LanguageSwitcher } from "@/web/features/language/language-switcher"

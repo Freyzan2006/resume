@@ -5,9 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- lang, title, favicon and description come from assets/ at build time -->
     <title>Resume</title>
+    <script>
+      // Dark theme before the first paint, so neither the skeleton nor the
+      // page flashes light. Mirrors src/web/features/theme/model.ts, which
+      // stores the choice as reatom's withLocalStorage("resume.theme") record.
+      try {
+        const saved = JSON.parse(localStorage.getItem("resume.theme") || "null")
+        const theme = saved?.data
+        if (
+          theme === "dark" ||
+          (theme !== "light" &&
+            matchMedia("(prefers-color-scheme: dark)").matches)
+        ) {
+          document.documentElement.classList.add("dark")
+        }
+      } catch {
+        // No storage (private mode) or a broken record: keep the light theme.
+      }
+    </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <!--
+        Skeleton until the app's JS runs: plain HTML, so it shows as soon as
+        the CSS arrives. React replaces it on mount. Mirrors the layout of
+        src/web/app/app.tsx and the sections, so nothing jumps.
+      -->
+      <main
+        class="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-10"
+        aria-busy="true"
+        aria-label="Loading"
+      >
+        <div class="-mb-4 flex justify-end gap-2">
+          <div class="skeleton h-8 w-24"></div>
+          <div class="skeleton h-8 w-28"></div>
+          <div class="skeleton size-8"></div>
+        </div>
+
+        <div class="flex items-center gap-5">
+          <div class="skeleton size-24 shrink-0 rounded-full"></div>
+          <div class="flex flex-1 flex-col gap-3">
+            <div class="skeleton h-8 w-3/5 max-w-64"></div>
+            <div class="skeleton h-5 w-2/5 max-w-48"></div>
+            <div class="flex flex-wrap gap-x-5 gap-y-2">
+              <div class="skeleton h-3.5 w-20"></div>
+              <div class="skeleton h-3.5 w-36"></div>
+              <div class="skeleton h-3.5 w-28"></div>
+              <div class="skeleton h-3.5 w-16"></div>
+            </div>
+          </div>
+        </div>
+
+        <section class="flex flex-col gap-4">
+          <div class="skeleton h-3 w-20"></div>
+          <div class="flex flex-col gap-2">
+            <div class="skeleton h-4 w-full"></div>
+            <div class="skeleton h-4 w-4/5"></div>
+          </div>
+        </section>
+
+        <section class="flex flex-col gap-4">
+          <div class="skeleton h-3 w-44"></div>
+          <div class="flex flex-col gap-2">
+            <div class="flex justify-between gap-4">
+              <div class="skeleton h-5 w-1/2"></div>
+              <div class="skeleton h-3.5 w-40"></div>
+            </div>
+            <div class="skeleton h-3.5 w-20"></div>
+            <div class="skeleton h-4 w-3/4"></div>
+            <div class="skeleton h-4 w-2/3"></div>
+            <div class="flex gap-1.5">
+              <div class="skeleton h-5 w-14"></div>
+              <div class="skeleton h-5 w-20"></div>
+              <div class="skeleton h-5 w-14"></div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex justify-between gap-4">
+              <div class="skeleton h-5 w-2/5"></div>
+              <div class="skeleton h-3.5 w-36"></div>
+            </div>
+            <div class="skeleton h-4 w-3/5"></div>
+            <div class="flex gap-1.5">
+              <div class="skeleton h-5 w-14"></div>
+              <div class="skeleton h-5 w-12"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="flex flex-col gap-4">
+          <div class="skeleton h-3 w-24"></div>
+          <div class="flex flex-col gap-2">
+            <div class="skeleton h-4 w-3/5"></div>
+            <div class="skeleton h-4 w-1/2"></div>
+            <div class="skeleton h-4 w-2/5"></div>
+          </div>
+        </section>
+      </main>
+    </div>
     <script type="module" src="/src/web/app/main.tsx"></script>
   </body>
 </html>

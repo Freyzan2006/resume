@@ -1,5 +1,5 @@
 import { ChevronDown, Download } from "lucide-react"
-
+import type { Download as DownloadItem } from "@/core/types"
 import { Button, buttonVariants } from "@/web/ui/button"
 import {
   DropdownMenu,
@@ -7,7 +7,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/web/ui/dropdown-menu"
-import type { Download as DownloadItem } from "@/core/formats"
 
 /** One button for a single format, a menu for several. */
 export function Downloads({

@@ -51,7 +51,13 @@ bun run build:site  # только сайт, без файлов для скач
 bun run export      # только файлы для скачивания из уже собранного dist/
 bun run test        # vitest
 bun run schema      # перегенерировать schemas/ после правки схем
+bun run check       # biome: формат, импорты, классы Tailwind, линт (с исправлением)
+bun run ci          # biome ci + typecheck + knip + тесты
 ```
+
+Git-хуки (lefthook, ставятся при `bun install`): перед коммитом — biome по
+изменённым файлам, typecheck и knip; перед пушем — `bun run ci`. В GitHub те же
+проверки идут стадией `check` перед сборкой и деплоем.
 
 ## Форматы скачивания
 
@@ -98,8 +104,9 @@ src/
 
 - у каждого слоя своя tsconfig: в `core` нет ни DOM, ни Node, в `build` нет
   DOM, в `web` нет Node;
-- `bun run lint` (`no-restricted-imports` в `eslint.config.js`) запрещает
-  импорты против направления слоёв и зависимости сборки в `web`.
+- biome (`noRestrictedImports` в `biome.jsonc`) запрещает импорты против
+  направления слоёв и зависимости сборки в `web`; типы схем `web` берёт из
+  `@/core/types`.
 
 Типографика задаётся ролями, а не размерами: `display`, `lead`, `heading`,
 `title`, `copy`, `annotation`, `label` — компонент `<Text variant>` из

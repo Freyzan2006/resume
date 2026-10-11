@@ -1,6 +1,6 @@
 // Download formats a site can offer. Each one has an exporter in
 // build/exporters/ that writes dist/resume.<lang>.<extension> after `vite build`.
-export const formats = {
+const formats = {
   pdf: { extension: "pdf", label: "PDF" },
   json: { extension: "json", label: "JSON Resume" },
 } as const
@@ -10,7 +10,7 @@ export type FormatName = keyof typeof formats
 export const formatNames = Object.keys(formats) as [FormatName, ...FormatName[]]
 
 /** Path of an exported file, relative to dist/. */
-export const exportPath = (format: FormatName, lang: string) =>
+const exportPath = (format: FormatName, lang: string) =>
   `resume.${lang}.${formats[format].extension}`
 
 export type Download = {
