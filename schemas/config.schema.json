@@ -10,6 +10,11 @@
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9_-]*$"
     },
+    "url": {
+      "description": "Адрес сайта, например https://user.github.io/ — для canonical, hreflang, sitemap.xml",
+      "type": "string",
+      "format": "uri"
+    },
     "lang": {
       "default": "ru",
       "description": "Основной язык: его версия открывается по умолчанию. Для ru и en подписи встроены",

@@ -1,6 +1,7 @@
 import { relative, resolve, sep } from "node:path"
 import type { Plugin } from "vite"
 
+import { robotsTxt, sitemapXml } from "../core/seo/crawlers.ts"
 import { personalizeHtml } from "./html.ts"
 import { type LoadedSite, loadSite } from "./load.ts"
 
@@ -30,6 +31,11 @@ function moduleSource({ data, localAssets }: LoadedSite, root: string) {
 export function resume({ dir }: { dir: string }): Plugin {
   const assetsDir = resolve(dir)
   let root = process.cwd()
+  let cached: Promise<LoadedSite> | undefined
+  const site = () => {
+    cached ??= loadSite(assetsDir)
+    return cached
+  }
 
   return {
     name: "resume",
@@ -49,21 +55,34 @@ export function resume({ dir }: { dir: string }): Plugin {
         return
       }
 
-      const site = await loadSite(assetsDir)
-      for (const file of site.files) {
+      const loaded = await site()
+      for (const file of loaded.files) {
         this.addWatchFile(file)
       }
-      for (const warning of site.warnings) {
+      for (const warning of loaded.warnings) {
         this.warn(warning)
       }
-      return moduleSource(site, root)
+      return moduleSource(loaded, root)
+    },
+
+    async generateBundle() {
+      const { data } = await site()
+      const files = {
+        "robots.txt": robotsTxt(data),
+        "sitemap.xml": sitemapXml(data),
+      }
+      for (const [fileName, source] of Object.entries(files)) {
+        if (source) {
+          this.emitFile({ type: "asset", fileName, source })
+        }
+      }
     },
 
     async transformIndexHtml(html) {
       // On invalid content leave the page as is: the `load` hook above
       // reports the error (build failure or dev overlay).
-      const site = await loadSite(assetsDir).catch(() => undefined)
-      return site ? personalizeHtml(html, site.data) : html
+      const loaded = await site().catch(() => undefined)
+      return loaded ? personalizeHtml(html, loaded.data) : html
     },
 
     configureServer(server) {
@@ -76,6 +95,7 @@ export function resume({ dir }: { dir: string }): Plugin {
           return
         }
 
+        cached = undefined
         const { moduleGraph } = server.environments.client
         const module = moduleGraph.getModuleById(RESOLVED_ID)
         if (module) {

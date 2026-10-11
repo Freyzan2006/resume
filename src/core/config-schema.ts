@@ -47,6 +47,13 @@ export const configSchema = z.strictObject({
     .describe(
       "Какое резюме собирать: папка в assets/. Можно не указывать, если папка одна"
     ),
+  url: z
+    .url({ protocol: /^https?$/, error: "ожидается адрес вида https://…" })
+    .transform((value) => (value.endsWith("/") ? value : `${value}/`))
+    .optional()
+    .describe(
+      "Адрес сайта, например https://user.github.io/ — для canonical, hreflang, sitemap.xml"
+    ),
   lang: z
     .string()
     .regex(langPattern, "ожидается код языка: ru, en, …")

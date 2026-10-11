@@ -2,10 +2,13 @@ import { mkdtemp, readFile, rm } from "node:fs/promises"
 import { tmpdir } from "node:os"
 import { join, resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
-import { resumeSchema } from "../../core/resume-schema.ts"
-import { loadSite } from "../load.ts"
-import { exportJson, JSON_RESUME_SCHEMA } from "./json.ts"
-import type { ExportContext } from "./types.ts"
+import {
+  exportJson,
+  JSON_RESUME_SCHEMA,
+} from "../../../src/build/exporters/json.ts"
+import type { ExportContext } from "../../../src/build/exporters/types.ts"
+import { loadSite } from "../../../src/build/load.ts"
+import { resumeSchema } from "../../../src/core/resume-schema.ts"
 
 let dir: string
 

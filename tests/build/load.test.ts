@@ -3,8 +3,8 @@ import { tmpdir } from "node:os"
 import { dirname, join, resolve } from "node:path"
 import { afterEach, beforeEach, describe, expect, it } from "vitest"
 
-import { renderJsonSchemas, SCHEMAS_DIR } from "./json-schema.ts"
-import { loadSite, ResumeError } from "./load.ts"
+import { renderJsonSchemas, SCHEMAS_DIR } from "../../src/build/json-schema.ts"
+import { loadSite, ResumeError } from "../../src/build/load.ts"
 
 const ROOT = resolve(import.meta.dirname, "../..")
 const ASSETS = join(ROOT, "assets")

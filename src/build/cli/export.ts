@@ -1,10 +1,14 @@
 // Writes every format listed in assets/config.yaml (`formats`) for every
-// language version into dist/. Run after `vite build`.
+// language version into dist/, and the link-preview card when `url` is set.
+// Run after `vite build`.
+import { readFile } from "node:fs/promises"
 import { resolve } from "node:path"
 import { type PreviewServer, preview } from "vite"
 
+import { OG_IMAGE } from "../../core/seo/urls.ts"
 import { exporters } from "../exporters/index.ts"
 import { ASSETS_DIR, loadSite } from "../load.ts"
+import { builtStylesheet, renderOgImage } from "../og-image.ts"
 
 const { data, sources } = await loadSite(resolve(ASSETS_DIR))
 
@@ -32,6 +36,20 @@ try {
       await exporters[format]({ locale, source, outFile, pageUrl })
       console.log(`${format}: ${outFile}`)
     }
+  }
+
+  if (data.url) {
+    const outFile = resolve("dist", OG_IMAGE.file)
+    await renderOgImage({
+      locale: data.locales[0],
+      siteUrl: data.url,
+      previewUrl: await siteUrl(),
+      stylesheet: builtStylesheet(
+        await readFile(resolve("dist", "index.html"), "utf8")
+      ),
+      outFile,
+    })
+    console.log(`og: ${outFile}`)
   }
 } finally {
   await server?.close()

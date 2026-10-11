@@ -1,6 +1,10 @@
 import { describe, expect, it } from "vitest"
 
-import { formatDuration, periodMonths, totalMonths } from "./experience.ts"
+import {
+  formatDuration,
+  periodMonths,
+  totalMonths,
+} from "../../src/core/experience.ts"
 
 const now = new Date(2026, 9, 9) // October 2026
 

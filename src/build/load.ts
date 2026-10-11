@@ -8,6 +8,7 @@ import { type Config, configSchema } from "../core/config-schema.ts"
 import { downloadsFor } from "../core/formats.ts"
 import { resolveLabels } from "../core/labels.ts"
 import { resumeSchema, unrenderedSections } from "../core/resume-schema.ts"
+import { metaDescription } from "../core/seo/text.ts"
 import { type Locale, pageTitle, type SiteData } from "../core/site.ts"
 
 // assets/
@@ -235,6 +236,7 @@ export async function loadSite(dir: string): Promise<LoadedSite> {
       }
     }
 
+    const title = pageTitle(resume.basics)
     sources[lang] = source.value
     locales.push({
       lang,
@@ -245,7 +247,8 @@ export async function loadSite(dir: string): Promise<LoadedSite> {
         lang,
         multilingual: langs.length > 1,
       }),
-      title: pageTitle(resume.basics),
+      title,
+      description: metaDescription(resume.basics, title),
     })
   }
 
@@ -256,6 +259,7 @@ export async function loadSite(dir: string): Promise<LoadedSite> {
   return {
     data: {
       profile,
+      url: config.url,
       sections: config.sections,
       locales: locales as SiteData["locales"],
     },

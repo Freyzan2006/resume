@@ -20,8 +20,19 @@ export const locale = computed(
   "locale"
 )
 
+const head = (selector: string) => document.head.querySelector(selector)
+
 effect(() => {
-  const { lang, title } = locale()
+  const { lang, title, description } = locale()
   document.documentElement.lang = lang
   document.title = title
+  head('meta[name="description"]')?.setAttribute("content", description)
+
+  // Each language page is canonical for itself, as hreflang expects.
+  const href = head(`link[rel="alternate"][hreflang="${lang}"]`)?.getAttribute(
+    "href"
+  )
+  if (href) {
+    head('link[rel="canonical"]')?.setAttribute("href", href)
+  }
 }, "applyLocale")

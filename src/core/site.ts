@@ -10,6 +10,8 @@ export type Locale = {
   downloads: Download[]
   /** Page title: "Name — Label". */
   title: string
+  /** Meta description: the summary as plain text. */
+  description: string
 }
 
 /**
@@ -19,6 +21,8 @@ export type Locale = {
 export type SiteData = {
   /** The assets/ folder the resume came from: frontend, devops, … */
   profile: string
+  /** The site's address from config.yaml, ending with "/". */
+  url?: string
   sections: SectionName[]
   /** All language versions; the first one is the primary language. */
   locales: [Locale, ...Locale[]]

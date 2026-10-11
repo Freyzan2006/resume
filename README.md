@@ -7,7 +7,7 @@
 
 ```
 assets/
-  config.yaml                 настройки: profile, lang, sections, formats, labels
+  config.yaml                 настройки: profile, url, lang, sections, formats, labels
   photo.jpg                   фото (путь задаётся в резюме)
   frontend/                   профиль — резюме под одну специальность
     resume.ru.yaml            по файлу на язык
@@ -42,11 +42,29 @@ assets/
 [YAML](https://marketplace.visualstudio.com/items?itemName=redhat.vscode-yaml)
 VS Code подсказывает поля и подчёркивает ошибки прямо в редакторе.
 
+## SEO
+
+Метаданные собираются из резюме основного языка и вписываются в `index.html`
+при сборке, поэтому их видят и превью ссылок, которые не выполняют JS:
+
+- `description`, Open Graph и Twitter Card — из `basics.name`, `label`,
+  `summary` (markdown → текст до 160 символов);
+- JSON-LD `schema.org/Person` — должность, текущая работа, образование, навыки,
+  языки, ссылки из `profiles`. Email и телефон туда не попадают;
+- `robots.txt`.
+
+`url` в `config.yaml` (адрес сайта) добавляет `canonical`, `hreflang` по языкам,
+`og:url`, `sitemap.xml` и картинку превью `og.png` 1200×630: `bun run build`
+рисует её в Chromium на CSS сайта — фото, имя, должность, город, стаж, первые
+навыки и адрес сайта. Без `url` `og:image` берётся из `basics.image`, только
+если это URL. При переключении языка сайт меняет `description` и `canonical` на
+версию этого языка.
+
 ## Команды
 
 ```sh
 bun run dev         # сайт с live-reload при правке assets/
-bun run build       # dist/ + файлы для скачивания (resume.<язык>.pdf, .json…)
+bun run build       # dist/ + файлы для скачивания (resume.<язык>.pdf, .json…) и og.png
 bun run build:site  # только сайт, без файлов для скачивания
 bun run export      # только файлы для скачивания из уже собранного dist/
 bun run test        # vitest
@@ -84,7 +102,9 @@ assets/              контент — единственное, что мен�
 schemas/             JSON Schema для редактора (генерируется: bun run schema)
 src/
   core/              домен: схемы, форматы, подписи, даты. Чистый TypeScript
+    seo/             мета-теги, JSON-LD, robots.txt, sitemap.xml
   build/             Node: загрузка assets/, Vite-плагин, экспортёры, CLI
+    og-image.ts      картинка превью og.png
     exporters/       по экспортёру на формат скачивания
     cli/             export.ts, schema.ts
   web/               React-приложение
@@ -93,6 +113,7 @@ src/
     features/        download, language, theme (состояние на reatom)
     ui/              компоненты shadcn/ui и typography.tsx (роли текста)
     lib/utils.ts     cn, знающий роли текста
+tests/               vitest, повторяет структуру src/; fixtures/ — общие данные
 ```
 
 Зависимости идут только так: `build → core` и `web → core`. Из схем

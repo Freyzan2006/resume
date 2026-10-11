@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { formatPeriod } from "./period.ts"
+import { formatPeriod } from "../../src/core/period.ts"
 
 describe("formatPeriod", () => {
   it("formats a closed period", () => {
