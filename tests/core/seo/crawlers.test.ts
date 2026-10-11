@@ -17,7 +17,7 @@ describe("sitemapXml", () => {
     const xml = sitemapXml(siteFixture("https://a.dev/", "ru", "en")) ?? ""
 
     expect(xml.match(/<loc>/g)).toHaveLength(2)
-    expect(xml).toContain("<loc>https://a.dev/?lang=en</loc>")
+    expect(xml).toContain("<loc>https://a.dev/en/</loc>")
     expect(xml.match(/hreflang="en"/g)).toHaveLength(2)
     expect(xml.match(/hreflang="x-default"/g)).toHaveLength(2)
   })

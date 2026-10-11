@@ -4,7 +4,9 @@ import { siteFixture } from "../../fixtures/site.ts"
 
 describe("personJsonLd", () => {
   it("builds a schema.org Person without contacts", () => {
-    expect(personJsonLd(siteFixture("https://a.dev/", "ru"))).toEqual({
+    const site = siteFixture("https://a.dev/", "ru")
+
+    expect(personJsonLd(site, site.locales[0])).toEqual({
       "@context": "https://schema.org",
       "@type": "Person",
       name: "Ivan",

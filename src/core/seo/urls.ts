@@ -1,3 +1,4 @@
+import { localePath } from "../pages.ts"
 import type { Resume } from "../resume-schema.ts"
 import type { Locale } from "../site.ts"
 
@@ -5,13 +6,10 @@ export type Alternate = { hreflang: string; href: string }
 
 /** The address of every language version; the primary one is the site root. */
 export function languagePages(siteUrl: string, locales: Locale[]): Alternate[] {
-  const [primary] = locales
+  const primaryLang = locales[0]?.lang ?? ""
   return locales.map(({ lang }) => ({
     hreflang: lang,
-    href:
-      lang === primary?.lang
-        ? siteUrl
-        : `${siteUrl}?lang=${encodeURIComponent(lang)}`,
+    href: `${siteUrl}${localePath(lang, primaryLang)}`,
   }))
 }
 
@@ -31,5 +29,7 @@ export function publicImage({ image }: Resume["basics"]) {
   return image && /^https?:\/\//.test(image) ? image : undefined
 }
 
-/** Link-preview card, rendered by the export step next to index.html. */
-export const OG_IMAGE = { file: "og.png", width: 1200, height: 630 }
+/** Link-preview cards, one per language, rendered by the export step. */
+export const OG_IMAGE = { width: 1200, height: 630 }
+
+export const ogImageFile = (lang: string) => `og.${lang}.png`

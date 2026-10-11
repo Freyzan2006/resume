@@ -1,56 +1,42 @@
 // Writes every format listed in assets/config.yaml (`formats`) for every
-// language version into dist/, and the link-preview card when `url` is set.
-// Run after `vite build`.
-import { readFile } from "node:fs/promises"
+// language version into dist/, the link-preview cards when `url` is set, and
+// prerenders the pages. Run after `vite build`.
 import { resolve } from "node:path"
-import { type PreviewServer, preview } from "vite"
 
-import { OG_IMAGE } from "../../core/seo/urls.ts"
+import { localePath } from "../../core/pages.ts"
+import { ogImageFile } from "../../core/seo/urls.ts"
+import { browserSession } from "../browser.ts"
 import { exporters } from "../exporters/index.ts"
 import { ASSETS_DIR, loadSite } from "../load.ts"
-import { builtStylesheet, renderOgImage } from "../og-image.ts"
+import { renderOgImage } from "../og-image.ts"
+import { prerenderPages } from "../prerender.ts"
+
+const DIST_DIR = resolve("dist")
 
 const { data, sources } = await loadSite(resolve(ASSETS_DIR))
-
-let server: PreviewServer | undefined
-
-async function siteUrl() {
-  server ??= await preview({
-    preview: { port: 4180, open: false },
-    logLevel: "warn",
-  })
-  const url = server.resolvedUrls?.local[0]
-  if (!url) {
-    throw new Error("vite preview не сообщил адрес сервера")
-  }
-  return url
-}
+const session = browserSession()
 
 try {
   for (const locale of data.locales) {
-    const pageUrl = async () => `${await siteUrl()}?lang=${locale.lang}`
-
+    const path = localePath(locale.lang, data.locales[0].lang)
     for (const { format, href } of locale.downloads) {
-      const outFile = resolve("dist", href)
+      const outFile = resolve(DIST_DIR, href)
       const source = sources[locale.lang]
-      await exporters[format]({ locale, source, outFile, pageUrl })
+      await exporters[format]({ locale, source, path, outFile, session })
       console.log(`${format}: ${outFile}`)
+    }
+
+    if (data.url) {
+      const outFile = resolve(DIST_DIR, ogImageFile(locale.lang))
+      await renderOgImage({ locale, siteUrl: data.url, outFile, session })
+      console.log(`og: ${outFile}`)
     }
   }
 
-  if (data.url) {
-    const outFile = resolve("dist", OG_IMAGE.file)
-    await renderOgImage({
-      locale: data.locales[0],
-      siteUrl: data.url,
-      previewUrl: await siteUrl(),
-      stylesheet: builtStylesheet(
-        await readFile(resolve("dist", "index.html"), "utf8")
-      ),
-      outFile,
-    })
-    console.log(`og: ${outFile}`)
-  }
+  await prerenderPages(data, session, DIST_DIR)
+  console.log(
+    `prerender: ${data.locales.map((locale) => locale.lang).join(", ")}`
+  )
 } finally {
-  await server?.close()
+  await session.close()
 }

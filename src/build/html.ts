@@ -1,9 +1,8 @@
-import type { HtmlTagDescriptor } from "vite"
-
+import { localePath } from "../core/pages.ts"
 import { headTags } from "../core/seo/head.ts"
 import { personJsonLd, serializeJsonLd } from "../core/seo/json-ld.ts"
 import { escapeMarkup } from "../core/seo/text.ts"
-import type { SiteData } from "../core/site.ts"
+import type { Locale, SiteData } from "../core/site.ts"
 
 /** SVG favicon with the person's initials, so forks don't share an icon. */
 function initialsFavicon(name: string) {
@@ -16,36 +15,42 @@ function initialsFavicon(name: string) {
   return `data:image/svg+xml,${encodeURIComponent(svg)}`
 }
 
-const headTag = (
-  tag: string,
-  attrs: Record<string, string>,
-  children?: string
-): HtmlTagDescriptor => ({ tag, attrs, children, injectTo: "head" })
+function tag(name: string, attrs: Record<string, string>, children?: string) {
+  const attributes = Object.entries(attrs)
+    .map(([key, value]) => ` ${key}="${escapeMarkup(value)}"`)
+    .join("")
+  return children === undefined
+    ? `<${name}${attributes}>`
+    : `<${name}${attributes}>${children}</${name}>`
+}
 
 /**
- * index.html with the person's primary language, title, favicon and search
- * metadata. The web layer updates them when the language changes.
+ * index.html of one language version: its lang, title, favicon and search
+ * metadata. Pages of other languages live in a folder (en/), so <base> points
+ * their relative links (scripts, styles, downloads) back at the site root.
  */
-export function personalizeHtml(html: string, site: SiteData) {
-  const [{ lang, title, resume }] = site.locales
-  const { meta, links } = headTags(site)
+export function personalizeHtml(html: string, site: SiteData, locale: Locale) {
+  const { lang, title, resume } = locale
+  const folder = localePath(lang, site.locales[0].lang)
+  const { meta, links } = headTags(site, locale)
 
-  return {
-    html: html
-      .replace(/<html lang="[^"]*"/, `<html lang="${escapeMarkup(lang)}"`)
-      .replace(/<title>.*<\/title>/, `<title>${escapeMarkup(title)}</title>`),
-    tags: [
-      headTag("link", {
-        rel: "icon",
-        href: initialsFavicon(resume.basics.name),
-      }),
-      ...meta.map((attrs) => headTag("meta", attrs)),
-      ...links.map((attrs) => headTag("link", attrs)),
-      headTag(
-        "script",
-        { type: "application/ld+json" },
-        serializeJsonLd(personJsonLd(site))
-      ),
-    ],
-  }
+  const tags = [
+    tag("link", { rel: "icon", href: initialsFavicon(resume.basics.name) }),
+    ...meta.map((attrs) => tag("meta", attrs)),
+    ...links.map((attrs) => tag("link", attrs)),
+    tag(
+      "script",
+      { type: "application/ld+json" },
+      serializeJsonLd(personJsonLd(site, locale))
+    ),
+  ]
+
+  return html
+    .replace(/<html lang="[^"]*"/, `<html lang="${escapeMarkup(lang)}"`)
+    .replace(
+      /<head>/,
+      folder ? `<head>\n    ${tag("base", { href: "../" })}` : "<head>"
+    )
+    .replace(/<title>.*<\/title>/, `<title>${escapeMarkup(title)}</title>`)
+    .replace("</head>", `    ${tags.join("\n    ")}\n  </head>`)
 }

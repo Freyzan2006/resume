@@ -1,5 +1,11 @@
-import type { SiteData } from "../site.ts"
-import { alternates, OG_IMAGE, publicImage } from "./urls.ts"
+import type { Locale, SiteData } from "../site.ts"
+import {
+  alternates,
+  languagePages,
+  OG_IMAGE,
+  ogImageFile,
+  publicImage,
+} from "./urls.ts"
 
 type Meta =
   | { name: string; content: string }
@@ -14,14 +20,17 @@ export function ogLocale(lang: string) {
 }
 
 /**
- * Meta tags and links of the primary language. Without the site's address
+ * Meta tags and links of one language version. Without the site's address
  * (config.yaml → url) the ones that need an absolute URL are left out, and
  * the preview image falls back to a photo given as a URL.
  */
-export function headTags({ locales, url }: SiteData) {
-  const [primary, ...others] = locales
-  const { lang, title, description, resume } = primary
-  const card = url ? `${url}${OG_IMAGE.file}` : undefined
+export function headTags({ locales, url }: SiteData, locale: Locale) {
+  const { lang, title, description, resume } = locale
+  const others = locales.filter((other) => other.lang !== lang)
+  const page = url
+    ? languagePages(url, locales).find((item) => item.hreflang === lang)?.href
+    : undefined
+  const card = url ? `${url}${ogImageFile(lang)}` : undefined
   const image = card ?? publicImage(resume.basics)
 
   const meta: Meta[] = [
@@ -34,7 +43,7 @@ export function headTags({ locales, url }: SiteData) {
       property: "og:locale:alternate",
       content: ogLocale(other.lang),
     })),
-    ...(url ? [{ property: "og:url", content: url }] : []),
+    ...(page ? [{ property: "og:url", content: page }] : []),
     ...(image ? [{ property: "og:image", content: image }] : []),
     ...(card
       ? [
@@ -51,15 +60,16 @@ export function headTags({ locales, url }: SiteData) {
     { name: "twitter:description", content: description },
   ]
 
-  const links: Link[] = url
-    ? [
-        { rel: "canonical", href: url },
-        ...alternates(url, locales).map((page) => ({
-          rel: "alternate",
-          ...page,
-        })),
-      ]
-    : []
+  const links: Link[] =
+    url && page
+      ? [
+          { rel: "canonical", href: page },
+          ...alternates(url, locales).map((item) => ({
+            rel: "alternate",
+            ...item,
+          })),
+        ]
+      : []
 
   return { meta, links }
 }

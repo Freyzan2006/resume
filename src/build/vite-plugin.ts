@@ -1,6 +1,7 @@
 import { relative, resolve, sep } from "node:path"
 import type { Plugin } from "vite"
 
+import { langOfPath, localePath } from "../core/pages.ts"
 import { robotsTxt, sitemapXml } from "../core/seo/crawlers.ts"
 import { personalizeHtml } from "./html.ts"
 import { type LoadedSite, loadSite } from "./load.ts"
@@ -65,24 +66,56 @@ export function resume({ dir }: { dir: string }): Plugin {
       return moduleSource(loaded, root)
     },
 
-    async generateBundle() {
-      const { data } = await site()
-      const files = {
-        "robots.txt": robotsTxt(data),
-        "sitemap.xml": sitemapXml(data),
-      }
-      for (const [fileName, source] of Object.entries(files)) {
-        if (source) {
-          this.emitFile({ type: "asset", fileName, source })
+    generateBundle: {
+      // After Vite has written its scripts and styles into index.html.
+      order: "post",
+      async handler(_, bundle) {
+        const { data } = await site()
+        const index = bundle["index.html"]
+        if (index?.type !== "asset") {
+          throw new Error("сборка не создала index.html")
         }
-      }
+        const template = String(index.source)
+        const [primary] = data.locales
+
+        const files: Record<string, string | undefined> = {
+          "robots.txt": robotsTxt(data),
+          "sitemap.xml": sitemapXml(data),
+        }
+        for (const locale of data.locales) {
+          const fileName = `${localePath(locale.lang, primary.lang)}index.html`
+          files[fileName] = personalizeHtml(template, data, locale)
+        }
+
+        index.source = files["index.html"] ?? template
+        delete files["index.html"]
+        for (const [fileName, source] of Object.entries(files)) {
+          if (source) {
+            this.emitFile({ type: "asset", fileName, source })
+          }
+        }
+      },
     },
 
-    async transformIndexHtml(html) {
+    async transformIndexHtml(html, { server, originalUrl }) {
+      // Builds personalize every language page in generateBundle instead.
+      if (!server) {
+        return html
+      }
       // On invalid content leave the page as is: the `load` hook above
-      // reports the error (build failure or dev overlay).
+      // reports the error (dev overlay).
       const loaded = await site().catch(() => undefined)
-      return loaded ? personalizeHtml(html, loaded.data) : html
+      if (!loaded) {
+        return html
+      }
+      const { locales } = loaded.data
+      const path = (originalUrl ?? "/").replace(/^\//, "")
+      const lang = langOfPath(
+        path,
+        locales.map((locale) => locale.lang)
+      )
+      const locale = locales.find((item) => item.lang === lang) ?? locales[0]
+      return personalizeHtml(html, loaded.data, locale)
     },
 
     configureServer(server) {

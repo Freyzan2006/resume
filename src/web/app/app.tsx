@@ -1,5 +1,4 @@
 import site from "virtual:resume"
-import { reatomComponent } from "@reatom/react"
 
 import { Downloads } from "@/web/features/download/downloads"
 import { LanguageSwitcher } from "@/web/features/language/language-switcher"
@@ -7,9 +6,7 @@ import { locale } from "@/web/features/language/model"
 import { ThemeToggle } from "@/web/features/theme/theme-toggle"
 import { Header, sections } from "@/web/sections"
 
-export const App = reatomComponent(() => {
-  const current = locale()
-
+export function App() {
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-10 print:max-w-none print:gap-5 print:p-0">
       <div className="-mb-4 flex justify-end gap-2 print:hidden">
@@ -17,19 +14,19 @@ export const App = reatomComponent(() => {
         {/* Exported files are written after `vite build`, so prod only. */}
         {import.meta.env.PROD && (
           <Downloads
-            downloads={current.downloads}
-            label={current.labels.download}
+            downloads={locale.downloads}
+            label={locale.labels.download}
           />
         )}
         <ThemeToggle />
       </div>
 
-      <Header basics={current.resume.basics} />
+      <Header basics={locale.resume.basics} />
 
       {site.sections.map((name) => {
         const SectionComponent = sections[name]
-        return <SectionComponent key={name} locale={current} />
+        return <SectionComponent key={name} locale={locale} />
       })}
     </main>
   )
-}, "App")
+}

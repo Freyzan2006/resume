@@ -1,23 +1,9 @@
-import { readFile } from "node:fs/promises"
-import { extname } from "node:path"
-
-import { formatDuration, totalMonths } from "../core/experience.ts"
-import { formatLocation } from "../core/location.ts"
-import { escapeMarkup } from "../core/seo/text.ts"
+import { type CardContent, cardContent } from "../core/seo/card.ts"
+import { escapeMarkup as e } from "../core/seo/text.ts"
 import { OG_IMAGE, publicImage } from "../core/seo/urls.ts"
 import type { Locale } from "../core/site.ts"
-import { launchBrowser } from "./browser.ts"
-
-const MAX_SKILLS = 6
-
-const IMAGE_TYPES: Record<string, string> = {
-  ".jpg": "image/jpeg",
-  ".jpeg": "image/jpeg",
-  ".png": "image/png",
-  ".webp": "image/webp",
-  ".avif": "image/avif",
-  ".svg": "image/svg+xml",
-}
+import type { BrowserSession } from "./browser.ts"
+import { imageDataUrl } from "./images.ts"
 
 const style = `
   body { margin: 0; width: ${OG_IMAGE.width}px; height: ${OG_IMAGE.height}px; overflow: hidden; }
@@ -35,42 +21,22 @@ const style = `
   .host { font-size: 24px; color: var(--muted-foreground); white-space: nowrap; }
 `
 
-type CardOptions = {
-  locale: Locale
-  /** The site's address from config.yaml: its host is printed on the card. */
-  siteUrl: string
+type CardPage = {
   /** The built site's stylesheet, for its fonts and colour tokens. */
   stylesheet: string
-  /** Photo as a URL the card page can load. */
+  /** The photo as a URL the card page can load. */
   image?: string
-  now: Date
 }
 
-/** The card's page: name, title, location, experience and key skills. */
-export function ogCardHtml({
-  locale,
-  siteUrl,
-  stylesheet,
-  image,
-  now,
-}: CardOptions) {
-  const { lang, labels, resume } = locale
-  const { basics } = resume
-  const months = totalMonths(resume.work, now)
-  const facts = [
-    formatLocation(basics.location),
-    months > 0
-      ? `${labels.work}: ${formatDuration(months, lang, { units: labels })}`
-      : undefined,
-  ].filter((fact) => fact !== undefined)
-  const skills = [
-    ...new Set(resume.skills.flatMap((skill) => skill.keywords)),
-  ].slice(0, MAX_SKILLS)
-  const host = siteUrl.replace(/^https?:\/\//, "").replace(/\/$/, "")
-  const e = escapeMarkup
+/** The card as a page in the site's dark theme. */
+export function cardHtml(card: CardContent, { stylesheet, image }: CardPage) {
+  const optional = (
+    value: string | undefined,
+    render: (value: string) => string
+  ) => (value ? render(value) : "")
 
   return `<!doctype html>
-<html lang="${e(lang)}" class="dark">
+<html lang="${e(card.lang)}" class="dark">
 <head>
 <meta charset="UTF-8" />
 <link rel="stylesheet" href="${e(stylesheet)}" />
@@ -79,31 +45,20 @@ export function ogCardHtml({
 <body>
 <div class="card">
   <div class="person">
-    ${image ? `<img class="photo" src="${e(image)}" alt="" />` : ""}
+    ${optional(image, (src) => `<img class="photo" src="${e(src)}" alt="" />`)}
     <div>
-      <h1 class="name font-heading">${e(basics.name)}</h1>
-      ${basics.label ? `<div class="label">${e(basics.label)}</div>` : ""}
-      ${facts.length ? `<div class="facts">${e(facts.join(" · "))}</div>` : ""}
+      <h1 class="name font-heading">${e(card.name)}</h1>
+      ${optional(card.label, (label) => `<div class="label">${e(label)}</div>`)}
+      ${optional(card.facts.join(" · "), (facts) => `<div class="facts">${e(facts)}</div>`)}
     </div>
   </div>
   <div class="footer">
-    <ul class="skills font-mono">${skills.map((skill) => `<li>${e(skill)}</li>`).join("")}</ul>
-    <div class="host font-mono">${e(host)}</div>
+    <ul class="skills font-mono">${card.skills.map((skill) => `<li>${e(skill)}</li>`).join("")}</ul>
+    <div class="host font-mono">${e(card.host)}</div>
   </div>
 </div>
 </body>
 </html>`
-}
-
-/** A local photo as a data URL: the card page cannot read the build machine's files. */
-async function cardImage(basics: Locale["resume"]["basics"]) {
-  const { image } = basics
-  if (!image || publicImage(basics)) {
-    return image
-  }
-  const type = IMAGE_TYPES[extname(image).toLowerCase()]
-  const data = await readFile(image, "base64")
-  return `data:${type};base64,${data}`
 }
 
 /** The stylesheet index.html links to, as a path relative to the site root. */
@@ -118,37 +73,41 @@ export function builtStylesheet(indexHtml: string) {
 type RenderOptions = {
   locale: Locale
   siteUrl: string
-  /** Where the built site is served during the export. */
-  previewUrl: string
-  stylesheet: string
   outFile: string
+  session: BrowserSession
 }
 
 /** Renders the card with headless Chromium on top of the built site's CSS. */
 export async function renderOgImage({
-  previewUrl,
+  locale,
+  siteUrl,
   outFile,
-  ...options
+  session,
 }: RenderOptions) {
-  const page = ogCardHtml({
-    ...options,
-    image: await cardImage(options.locale.resume.basics),
-    now: new Date(),
+  const previewUrl = await session.siteUrl()
+  const { basics } = locale.resume
+  const html = cardHtml(cardContent(locale, siteUrl, new Date()), {
+    stylesheet: builtStylesheet(await (await fetch(previewUrl)).text()),
+    image:
+      basics.image && !publicImage(basics)
+        ? await imageDataUrl(basics.image)
+        : basics.image,
   })
+
   const cardUrl = new URL("og-card.html", previewUrl).href
-  const browser = await launchBrowser()
+  const browser = await session.browser()
+  const page = await browser.newPage({
+    viewport: { width: OG_IMAGE.width, height: OG_IMAGE.height },
+  })
 
   try {
-    const tab = await browser.newPage({
-      viewport: { width: OG_IMAGE.width, height: OG_IMAGE.height },
-    })
-    await tab.route(cardUrl, (route) =>
-      route.fulfill({ contentType: "text/html", body: page })
+    await page.route(cardUrl, (route) =>
+      route.fulfill({ contentType: "text/html", body: html })
     )
-    await tab.goto(cardUrl, { waitUntil: "networkidle" })
-    await tab.evaluate("document.fonts.ready.then(() => {})")
-    await tab.screenshot({ path: outFile, type: "png" })
+    await page.goto(cardUrl, { waitUntil: "networkidle" })
+    await page.evaluate("document.fonts.ready.then(() => {})")
+    await page.screenshot({ path: outFile, type: "png" })
   } finally {
-    await browser.close()
+    await page.close()
   }
 }

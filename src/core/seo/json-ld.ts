@@ -1,4 +1,4 @@
-import type { SiteData } from "../site.ts"
+import type { Locale, SiteData } from "../site.ts"
 import { plainText } from "./text.ts"
 import { publicImage } from "./urls.ts"
 
@@ -15,9 +15,9 @@ const unique = (values: (string | undefined)[]) => [
   ...new Set(values.filter((value): value is string => !!value)),
 ]
 
-/** schema.org Person of the primary language. Contacts stay out on purpose. */
-export function personJsonLd({ locales, url }: SiteData) {
-  const { basics, work, education, skills, languages } = locales[0].resume
+/** schema.org Person in the language of the page. Contacts stay out on purpose. */
+export function personJsonLd({ url }: SiteData, { resume }: Locale) {
+  const { basics, work, education, skills, languages } = resume
   const { location } = basics
 
   return compact({

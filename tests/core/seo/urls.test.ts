@@ -12,7 +12,7 @@ describe("languagePages", () => {
 
     expect(languagePages("https://a.dev/cv/", locales)).toEqual([
       { hreflang: "ru", href: "https://a.dev/cv/" },
-      { hreflang: "en", href: "https://a.dev/cv/?lang=en" },
+      { hreflang: "en", href: "https://a.dev/cv/en/" },
     ])
   })
 })

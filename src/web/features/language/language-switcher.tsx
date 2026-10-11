@@ -1,32 +1,38 @@
 import site from "virtual:resume"
-import { wrap } from "@reatom/core"
-import { reatomComponent } from "@reatom/react"
 
-import { Button } from "@/web/ui/button"
+import { cn } from "@/web/lib/utils"
+import { buttonVariants } from "@/web/ui/button"
 
-import { lang } from "./model"
+import { locale, localeHref } from "./model"
 
-/** RU / EN toggle; hidden when the profile has a single language. */
-export const LanguageSwitcher = reatomComponent(() => {
+/** Links to the other language pages; hidden when there is a single language. */
+export function LanguageSwitcher() {
   if (site.locales.length < 2) {
     return null
   }
 
-  const current = lang()
-
   return (
-    <fieldset className="flex" aria-label="Language">
-      {site.locales.map((item) => (
-        <Button
-          key={item.lang}
-          variant={item.lang === current ? "secondary" : "ghost"}
-          size="sm"
-          aria-pressed={item.lang === current}
-          onClick={wrap(() => lang.set(item.lang))}
-        >
-          {item.lang.toUpperCase()}
-        </Button>
-      ))}
-    </fieldset>
+    <nav className="flex" aria-label="Language">
+      {site.locales.map(({ lang }) => {
+        const current = lang === locale.lang
+        return (
+          <a
+            key={lang}
+            href={localeHref(lang)}
+            hrefLang={lang}
+            lang={lang}
+            aria-current={current ? "page" : undefined}
+            className={cn(
+              buttonVariants({
+                variant: current ? "secondary" : "ghost",
+                size: "sm",
+              })
+            )}
+          >
+            {lang.toUpperCase()}
+          </a>
+        )
+      })}
+    </nav>
   )
-}, "LanguageSwitcher")
+}

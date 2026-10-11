@@ -1,45 +1,43 @@
 import { describe, expect, it } from "vitest"
-import { builtStylesheet, ogCardHtml } from "../../src/build/og-image.ts"
-import { siteFixture } from "../fixtures/site.ts"
 
-const [locale] = siteFixture("https://a.dev/", "en").locales
+import { builtStylesheet, cardHtml } from "../../src/build/og-image.ts"
+import type { CardContent } from "../../src/core/seo/card.ts"
 
-const card = (overrides: Partial<Parameters<typeof ogCardHtml>[0]> = {}) =>
-  ogCardHtml({
-    locale: { ...locale, labels: { ...locale.labels, work: "Experience" } },
-    siteUrl: "https://a.dev/",
-    stylesheet: "./assets/index.css",
-    now: new Date(2025, 0),
-    ...overrides,
-  })
+const card: CardContent = {
+  lang: "en",
+  name: "Ivan",
+  label: "Dev",
+  facts: ["Moscow", "Experience: 6 years"],
+  skills: ["React", "Vite"],
+  host: "a.dev",
+}
 
-describe("ogCardHtml", () => {
-  it("shows the person, experience, skills and the site host", () => {
-    const html = card()
+const page = { stylesheet: "./assets/index.css" }
 
-    expect(html).toContain(">Ivan</h1>")
-    expect(html).toContain("Moscow · Experience: 6 years 1 month")
-    expect(html).toContain("<li>Vite</li>")
-    expect(html).toContain(">a.dev</div>")
+describe("cardHtml", () => {
+  it("lays out the card on the site's stylesheet", () => {
+    const html = cardHtml(card, { ...page, image: "data:image/png;base64,AA" })
+
     expect(html).toContain('href="./assets/index.css"')
+    expect(html).toContain('<img class="photo" src="data:image/png;base64,AA"')
+    expect(html).toContain(">Ivan</h1>")
+    expect(html).toContain(">Moscow · Experience: 6 years</div>")
+    expect(html).toContain("<li>React</li><li>Vite</li>")
+    expect(html).toContain(">a.dev</div>")
   })
 
-  it("leaves contacts out", () => {
-    expect(card()).not.toContain("ivan@example.com")
+  it("leaves out what the resume does not have", () => {
+    const html = cardHtml({ ...card, label: undefined, facts: [] }, page)
+
+    expect(html).not.toContain("<img")
+    expect(html).not.toContain('class="label"')
+    expect(html).not.toContain('class="facts"')
   })
 
   it("escapes the resume's text", () => {
-    const html = card({
-      locale: {
-        ...locale,
-        resume: {
-          ...locale.resume,
-          basics: { ...locale.resume.basics, name: "<b>Ivan</b>" },
-        },
-      },
-    })
-
-    expect(html).toContain("&lt;b&gt;Ivan&lt;/b&gt;")
+    expect(cardHtml({ ...card, name: "<b>Ivan</b>" }, page)).toContain(
+      "&lt;b&gt;Ivan&lt;/b&gt;"
+    )
   })
 })
 

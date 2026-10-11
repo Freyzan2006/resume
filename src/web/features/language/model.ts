@@ -1,38 +1,24 @@
 import site from "virtual:resume"
-import { computed, effect, searchParamsAtom } from "@reatom/core"
+
+import { localePath } from "@/core/pages"
 
 const [primary] = site.locales
-const langs = site.locales.map((locale) => locale.lang)
 
-/**
- * The shown language, kept in the URL (`?lang=en`) so a link opens the same
- * version. The primary language has no parameter.
- */
-export const lang = searchParamsAtom.lens("lang", {
-  parse: (value) => (value && langs.includes(value) ? value : primary.lang),
-  serialize: (value) => (value === primary.lang ? undefined : value),
-  replace: true,
-  name: "lang",
-})
+/** Every language has its own page, built with its lang on <html>. */
+export const locale =
+  site.locales.find((item) => item.lang === document.documentElement.lang) ??
+  primary
 
-export const locale = computed(
-  () => site.locales.find((item) => item.lang === lang()) ?? primary,
-  "locale"
-)
+/** Link to a language version; pages in folders resolve it via <base>. */
+export const localeHref = (lang: string) =>
+  localePath(lang, primary.lang) || "./"
 
-const head = (selector: string) => document.head.querySelector(selector)
-
-effect(() => {
-  const { lang, title, description } = locale()
-  document.documentElement.lang = lang
-  document.title = title
-  head('meta[name="description"]')?.setAttribute("content", description)
-
-  // Each language page is canonical for itself, as hreflang expects.
-  const href = head(`link[rel="alternate"][hreflang="${lang}"]`)?.getAttribute(
-    "href"
-  )
-  if (href) {
-    head('link[rel="canonical"]')?.setAttribute("href", href)
-  }
-}, "applyLocale")
+// Links from before the language folders: ?lang=en → en/
+const legacyLang = new URLSearchParams(location.search).get("lang")
+if (
+  legacyLang &&
+  legacyLang !== locale.lang &&
+  site.locales.some((item) => item.lang === legacyLang)
+) {
+  location.replace(new URL(localeHref(legacyLang), document.baseURI))
+}
