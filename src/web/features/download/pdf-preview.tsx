@@ -1,6 +1,6 @@
 import { ExternalLink } from "lucide-react"
 import type { PDFPageProxy } from "pdfjs-dist"
-import workerSrc from "pdfjs-dist/build/pdf.worker.min.mjs?url"
+import workerSrc from "pdfjs-dist/legacy/build/pdf.worker.min.mjs?url"
 import { use, useEffect, useRef } from "react"
 
 import { buttonVariants } from "@web/ui/button"
@@ -8,9 +8,12 @@ import { buttonVariants } from "@web/ui/button"
 import { fileLoader } from "./load-file"
 import type { ActionProps, PreviewProps } from "./types"
 
-/** pdf.js is loaded only when a PDF is previewed. */
+/**
+ * pdf.js is loaded only when a PDF is previewed. Its legacy build polyfills
+ * the newest built-ins: in-app browsers (Telegram, …) run older engines.
+ */
 const loadPages = fileLoader(async (url) => {
-  const pdfjs = await import("pdfjs-dist")
+  const pdfjs = await import("pdfjs-dist/legacy/build/pdf.mjs")
   pdfjs.GlobalWorkerOptions.workerSrc = workerSrc
   const pdf = await pdfjs.getDocument({ url }).promise
   return Promise.all(

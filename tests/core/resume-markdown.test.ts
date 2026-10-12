@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { resolveLabels } from "@core/labels.ts"
+import { type DocumentOptions, resumeDocument } from "@core/resume-document.ts"
 import { resumeMarkdown } from "@core/resume-markdown.ts"
 import { resumeSourceSchema } from "@core/resume-schema.ts"
 
@@ -27,13 +28,15 @@ const resume = resumeSourceSchema.parse({
   skills: [{ name: "Front", keywords: ["React", "TS"] }],
 })
 
-const markdown = (sections: Parameters<typeof resumeMarkdown>[1]["sections"]) =>
-  resumeMarkdown(resume, {
-    lang: "en",
-    labels: resolveLabels("en", { labels: {} }),
-    sections,
-    now: new Date(2025, 0),
-  })
+const markdown = (sections: DocumentOptions["sections"]) =>
+  resumeMarkdown(
+    resumeDocument(resume, {
+      lang: "en",
+      labels: resolveLabels("en", { labels: {} }),
+      sections,
+      now: new Date(2025, 0),
+    })
+  )
 
 describe("resumeMarkdown", () => {
   it("starts with the person and their contacts", () => {

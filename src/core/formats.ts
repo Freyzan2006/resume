@@ -4,6 +4,7 @@ const formats = {
   pdf: { extension: "pdf", label: "PDF" },
   json: { extension: "json", label: "JSON Resume" },
   md: { extension: "md", label: "Markdown" },
+  docx: { extension: "docx", label: "Word" },
 } as const
 
 export type FormatName = keyof typeof formats

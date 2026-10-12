@@ -15,7 +15,7 @@ export function fileLoader<T>(load: (url: string) => Promise<T>) {
   }
 }
 
-async function fetchOk(url: string) {
+export async function fetchOk(url: string) {
   const response = await fetch(url)
   if (!response.ok) {
     throw new Error(`${url}: ${response.status}`)

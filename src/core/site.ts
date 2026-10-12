@@ -28,6 +28,9 @@ export type SiteData = {
   locales: [Locale, ...Locale[]]
 }
 
-export function pageTitle({ name, label }: Resume["basics"]) {
+export function pageTitle({
+  name,
+  label,
+}: Pick<Resume["basics"], "name" | "label">) {
   return label ? `${name} — ${label}` : name
 }

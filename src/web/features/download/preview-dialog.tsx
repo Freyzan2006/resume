@@ -2,6 +2,7 @@ import { Download as DownloadIcon } from "lucide-react"
 import { Component, type ReactNode, Suspense, useRef } from "react"
 
 import type { Download, Locale } from "@core/types"
+import { cn } from "@web/lib/utils"
 import { Button, buttonVariants } from "@web/ui/button"
 import {
   Dialog,
@@ -34,6 +35,8 @@ class LoadErrorBoundary extends Component<
   }
 }
 
+const frameHeight = "h-full sm:h-[60vh]"
+
 type PreviewDialogProps = {
   /** Formats that have a preview, one tab each. */
   downloads: Download[]
@@ -61,7 +64,14 @@ export function PreviewDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       {current && (
         // Focus on «Download», so Enter downloads the shown file.
-        <DialogContent className="sm:max-w-2xl" initialFocus={downloadRef}>
+        <DialogContent
+          className={cn(
+            "sm:max-w-2xl",
+            // Phones: the whole screen, the preview takes what is left.
+            "max-sm:translate-none max-sm:inset-0 max-sm:h-dvh max-sm:max-w-none max-sm:grid-rows-[auto_1fr_auto] max-sm:gap-4 max-sm:rounded-none max-sm:p-4 max-sm:pb-[max(1rem,env(safe-area-inset-bottom))]"
+          )}
+          initialFocus={downloadRef}
+        >
           <DialogHeader>
             <DialogTitle>{labels.preview}</DialogTitle>
             <DialogDescription className="font-mono">
@@ -70,11 +80,12 @@ export function PreviewDialog({
           </DialogHeader>
 
           <Tabs
+            className="min-h-0"
             value={current.format}
             onValueChange={(value: Download["format"]) => onFormatChange(value)}
           >
             {downloads.length > 1 && (
-              <TabsList>
+              <TabsList className="max-w-full overflow-x-auto">
                 {downloads.map((item) => (
                   <TabsTrigger key={item.format} value={item.format}>
                     {item.label}
@@ -86,7 +97,11 @@ export function PreviewDialog({
               const Preview = previews[item.format]?.Content
               return (
                 Preview && (
-                  <TabsContent key={item.format} value={item.format}>
+                  <TabsContent
+                    key={item.format}
+                    value={item.format}
+                    className="min-h-0"
+                  >
                     <LoadErrorBoundary
                       fallback={
                         <Text variant="copy" className="text-destructive">
@@ -94,8 +109,13 @@ export function PreviewDialog({
                         </Text>
                       }
                     >
-                      <Suspense fallback={<Skeleton className="h-[60vh]" />}>
-                        <div className="h-[60vh] overflow-auto bg-muted p-4">
+                      <Suspense fallback={<Skeleton className={frameHeight} />}>
+                        <div
+                          className={cn(
+                            frameHeight,
+                            "overflow-auto bg-muted p-4"
+                          )}
+                        >
                           <Preview download={item} />
                         </div>
                       </Suspense>
@@ -106,18 +126,20 @@ export function PreviewDialog({
             })}
           </Tabs>
 
-          <DialogFooter>
+          <DialogFooter className="max-sm:flex-row max-sm:items-center">
             {Action && (
               <div className="sm:mr-auto">
                 <Action download={current} labels={labels} />
               </div>
             )}
-            <DialogClose render={<Button variant="outline" />}>
+            <DialogClose
+              render={<Button variant="outline" className="max-sm:hidden" />}
+            >
               {labels.close}
             </DialogClose>
             <a
               ref={downloadRef}
-              className={buttonVariants()}
+              className={buttonVariants({ className: "max-sm:flex-1" })}
               href={current.href}
               download={current.filename}
             >

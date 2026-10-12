@@ -19,3 +19,8 @@ export function renderMarkdown(source: string): string {
 export function renderInlineMarkdown(source: string): string {
   return renderMarkdown(source).replace(/^<p>([\s\S]*)<\/p>$/, "$1")
 }
+
+/** The syntax tree (mdast), for formats that render markdown themselves. */
+export function parseMarkdown(source: string) {
+  return processor.parse(source)
+}

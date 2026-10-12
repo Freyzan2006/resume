@@ -316,7 +316,7 @@ describe("loadSite: content", () => {
 
   it("rejects unknown config values", async () => {
     await write({
-      "config.yaml": "formats: [docx]\nsections: [hobbies]",
+      "config.yaml": "formats: [rtf]\nsections: [hobbies]",
       "p/resume.ru.yaml": minimal(),
     })
 
