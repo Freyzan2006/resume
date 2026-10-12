@@ -22,6 +22,12 @@ const labelNames = [
   ...sectionNames,
   "present",
   "download",
+  "preview",
+  "copy",
+  "copied",
+  "openInNewTab",
+  "close",
+  "loadError",
   // Duration units, used only where the browser's Intl lacks the language.
   "year",
   "month",

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest"
 
-import { headTags, ogLocale } from "../../../src/core/seo/head.ts"
-import type { SiteData } from "../../../src/core/site.ts"
-import { siteFixture } from "../../fixtures/site.ts"
+import { headTags, ogLocale } from "@core/seo/head.ts"
+import type { SiteData } from "@core/site.ts"
+import { siteFixture } from "@tests/fixtures/site.ts"
 
 const tagsOf = (site: SiteData, lang = site.locales[0].lang) =>
   headTags(

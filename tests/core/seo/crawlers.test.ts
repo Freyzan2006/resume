@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
-import { robotsTxt, sitemapXml } from "../../../src/core/seo/crawlers.ts"
-import { siteFixture } from "../../fixtures/site.ts"
+import { robotsTxt, sitemapXml } from "@core/seo/crawlers.ts"
+import { siteFixture } from "@tests/fixtures/site.ts"
 
 describe("robotsTxt", () => {
   it("points at the sitemap when the site url is known", () => {

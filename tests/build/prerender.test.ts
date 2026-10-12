@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { fillRoot } from "../../src/build/prerender.ts"
+import { fillRoot } from "@build/prerender.ts"
 
 describe("fillRoot", () => {
   it("replaces the skeleton of #root, keeping the rest of the page", () => {

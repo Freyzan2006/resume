@@ -1,4 +1,4 @@
-import { Text } from "@/web/ui/typography"
+import { Text } from "@web/ui/typography"
 
 import { joinParts, Section, type SectionProps } from "./section"
 

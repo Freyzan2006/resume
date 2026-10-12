@@ -1,5 +1,5 @@
-import { formatDuration, periodMonths, totalMonths } from "@/core/experience"
-import { formatPeriod } from "@/core/period"
+import { formatDuration, periodMonths, totalMonths } from "@core/experience"
+import { formatPeriod } from "@core/period"
 
 import { joinParts, Section, type SectionProps } from "./section"
 import { TimelineItem, TitleLink } from "./timeline"

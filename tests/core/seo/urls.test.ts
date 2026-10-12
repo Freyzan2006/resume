@@ -1,10 +1,7 @@
 import { describe, expect, it } from "vitest"
-import {
-  alternates,
-  languagePages,
-  publicImage,
-} from "../../../src/core/seo/urls.ts"
-import { siteFixture } from "../../fixtures/site.ts"
+
+import { alternates, languagePages, publicImage } from "@core/seo/urls.ts"
+import { siteFixture } from "@tests/fixtures/site.ts"
 
 describe("languagePages", () => {
   it("keeps the primary language at the root", () => {

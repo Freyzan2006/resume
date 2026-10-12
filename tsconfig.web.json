@@ -23,7 +23,8 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": ["./src/*"]
+      "@core/*": ["./src/core/*"],
+      "@web/*": ["./src/web/*"]
     }
   },
   "include": ["src/web"]

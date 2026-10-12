@@ -1,6 +1,6 @@
-import { resumeSchema } from "../../src/core/resume-schema.ts"
-import { metaDescription } from "../../src/core/seo/text.ts"
-import type { Locale, SiteData } from "../../src/core/site.ts"
+import { resumeSchema } from "@core/resume-schema.ts"
+import { metaDescription } from "@core/seo/text.ts"
+import type { Locale, SiteData } from "@core/site.ts"
 
 const TITLE = "Ivan — Dev"
 

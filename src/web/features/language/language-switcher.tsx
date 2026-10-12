@@ -1,7 +1,7 @@
 import site from "virtual:resume"
 
-import { cn } from "@/web/lib/utils"
-import { buttonVariants } from "@/web/ui/button"
+import { cn } from "@web/lib/utils"
+import { buttonVariants } from "@web/ui/button"
 
 import { locale, localeHref } from "./model"
 

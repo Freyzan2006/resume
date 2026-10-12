@@ -8,7 +8,10 @@
   ],
   "compilerOptions": {
     "paths": {
-      "@/*": ["./src/*"]
+      "@core/*": ["./src/core/*"],
+      "@web/*": ["./src/web/*"],
+      "@build/*": ["./src/build/*"],
+      "@tests/*": ["./tests/*"]
     }
   }
 }

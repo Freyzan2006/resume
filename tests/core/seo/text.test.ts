@@ -1,10 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import {
-  escapeMarkup,
-  plainText,
-  truncate,
-} from "../../../src/core/seo/text.ts"
+import { escapeMarkup, plainText, truncate } from "@core/seo/text.ts"
 
 describe("plainText", () => {
   it("strips tags and decodes entities", () => {

@@ -1,10 +1,10 @@
 import site from "virtual:resume"
 
-import { Downloads } from "@/web/features/download/downloads"
-import { LanguageSwitcher } from "@/web/features/language/language-switcher"
-import { locale } from "@/web/features/language/model"
-import { ThemeToggle } from "@/web/features/theme/theme-toggle"
-import { Header, sections } from "@/web/sections"
+import { Downloads } from "@web/features/download/downloads"
+import { LanguageSwitcher } from "@web/features/language/language-switcher"
+import { locale } from "@web/features/language/model"
+import { ThemeToggle } from "@web/features/theme/theme-toggle"
+import { Header, sections } from "@web/sections"
 
 export function App() {
   return (
@@ -13,10 +13,7 @@ export function App() {
         <LanguageSwitcher />
         {/* Exported files are written after `vite build`, so prod only. */}
         {import.meta.env.PROD && (
-          <Downloads
-            downloads={locale.downloads}
-            label={locale.labels.download}
-          />
+          <Downloads downloads={locale.downloads} labels={locale.labels} />
         )}
         <ThemeToggle />
       </div>

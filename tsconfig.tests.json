@@ -18,7 +18,12 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "paths": {
+      "@core/*": ["./src/core/*"],
+      "@build/*": ["./src/build/*"],
+      "@tests/*": ["./tests/*"]
+    }
   },
   "include": ["tests"]
 }

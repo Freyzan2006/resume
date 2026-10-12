@@ -21,7 +21,31 @@
     "parser": { "tailwindDirectives": true }
   },
   "assist": {
-    "actions": { "source": { "organizeImports": "on" } }
+    "actions": {
+      "source": {
+        "organizeImports": {
+          "level": "on",
+          "options": {
+            "groups": [
+              [
+                ":URL:",
+                ":NODE:",
+                ":PACKAGE:",
+                "virtual:*",
+                "!@core/**",
+                "!@web/**",
+                "!@build/**",
+                "!@tests/**"
+              ],
+              ":BLANK_LINE:",
+              ["@core/**", "@web/**", "@build/**", "@tests/**"],
+              ":BLANK_LINE:",
+              ":PATH:"
+            ]
+          }
+        }
+      }
+    }
   },
   "linter": {
     "domains": { "react": "recommended" },
@@ -48,13 +72,12 @@
               "options": {
                 "patterns": [
                   {
-                    "group": [
-                      "@/build/**",
-                      "**/build/**",
-                      "@/web/**",
-                      "**/web/**"
-                    ],
+                    "group": ["../**/build/**", "../**/web/**"],
                     "message": "core не зависит от других слоёв"
+                  },
+                  {
+                    "group": ["@core/**", "@build/**", "@web/**", "@tests/**"],
+                    "message": "core исполняет node (через build) — только относительные импорты"
                   },
                   {
                     "group": [
@@ -83,12 +106,12 @@
               "options": {
                 "patterns": [
                   {
-                    "group": ["@/web/**", "**/web/**"],
+                    "group": ["../**/web/**"],
                     "message": "build не зависит от web"
                   },
                   {
-                    "group": ["@/**"],
-                    "message": "build запускается через node — только относительные импорты"
+                    "group": ["@core/**", "@build/**", "@web/**", "@tests/**"],
+                    "message": "build исполняет node — только относительные импорты"
                   }
                 ]
               }
@@ -106,12 +129,12 @@
               "level": "error",
               "options": {
                 "paths": {
-                  "cn": "импортируйте cn из \"@/web/lib/utils\" — он знает роли текста"
+                  "cn": "импортируйте cn из \"@web/lib/utils\" — он знает роли текста"
                 },
                 "patterns": [
                   {
-                    "group": ["@/build/**", "**/build/**"],
-                    "message": "web не зависит от build"
+                    "group": ["@build/**", "../**/build/**", "@tests/**"],
+                    "message": "web не зависит от build и тестов"
                   },
                   {
                     "group": [
@@ -127,13 +150,13 @@
                   },
                   {
                     "group": [
-                      "@/core/resume-schema",
-                      "@/core/config-schema",
-                      "@/core/markdown",
-                      "@/core/labels",
-                      "@/core/site"
+                      "@core/resume-schema",
+                      "@core/config-schema",
+                      "@core/markdown",
+                      "@core/labels",
+                      "@core/site"
                     ],
-                    "message": "эти модули core тянут zod и unified; типы берите из \"@/core/types\""
+                    "message": "эти модули core тянут zod и unified; типы берите из \"@core/types\""
                   }
                 ]
               }

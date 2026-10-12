@@ -1,4 +1,4 @@
-import { cn } from "@/web/lib/utils"
+import { cn } from "@web/lib/utils"
 
 /**
  * shadcn/ui Skeleton. Its look is the `.skeleton` class of index.css, shared

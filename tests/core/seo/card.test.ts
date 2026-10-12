@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
-import { cardContent } from "../../../src/core/seo/card.ts"
-import { siteFixture } from "../../fixtures/site.ts"
+import { cardContent } from "@core/seo/card.ts"
+import { siteFixture } from "@tests/fixtures/site.ts"
 
 const [locale] = siteFixture("https://a.dev/", "en").locales
 const labels = { ...locale.labels, work: "Experience" }

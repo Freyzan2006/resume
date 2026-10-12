@@ -1,9 +1,9 @@
 import { Globe, Link, Mail, MapPin, Phone } from "lucide-react"
 import type { ReactNode } from "react"
 
-import { formatLocation } from "@/core/location"
-import type { Resume } from "@/core/types"
-import { Text } from "@/web/ui/typography"
+import { formatLocation } from "@core/location"
+import type { Resume } from "@core/types"
+import { Text } from "@web/ui/typography"
 
 function Item({ icon, children }: { icon: ReactNode; children: ReactNode }) {
   return (

@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
-import { builtStylesheet, cardHtml } from "../../src/build/og-image.ts"
-import type { CardContent } from "../../src/core/seo/card.ts"
+import { builtStylesheet, cardHtml } from "@build/og-image.ts"
+import type { CardContent } from "@core/seo/card.ts"
 
 const card: CardContent = {
   lang: "en",

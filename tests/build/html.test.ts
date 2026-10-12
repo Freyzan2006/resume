@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest"
 
-import { personalizeHtml } from "../../src/build/html.ts"
-import { siteFixture } from "../fixtures/site.ts"
+import { personalizeHtml } from "@build/html.ts"
+import { siteFixture } from "@tests/fixtures/site.ts"
 
 const template = `<!doctype html>
 <html lang="en">

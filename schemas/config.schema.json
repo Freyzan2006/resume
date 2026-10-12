@@ -82,6 +82,12 @@
             "languages",
             "present",
             "download",
+            "preview",
+            "copy",
+            "copied",
+            "openInNewTab",
+            "close",
+            "loadError",
             "year",
             "month"
           ]

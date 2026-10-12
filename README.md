@@ -92,6 +92,14 @@ Git-хуки (lefthook, ставятся при `bun install`): перед ко�
 | `pdf`  | `resume.<язык>.pdf`  | Сайт, распечатанный headless Chromium (стили `print:`)         |
 | `json` | `resume.<язык>.json` | JSON Resume: подходит для тем jsonresume.org и других сервисов |
 
+Кнопка «Скачать PDF» скачивает первый формат из `formats` в один клик. Рядом —
+меню с остальными форматами и «Предпросмотром»: окно с вкладкой на каждый
+формат. JSON показан с подсветкой, ровно как скачается, и копируется кнопкой;
+PDF нарисован pdf.js (загружается только при открытии превью) и открывается в
+новой вкладке. Фокус в окне стоит на «Скачать», так что Enter скачивает файл.
+Превью и дополнительные кнопки форматов — реестр `previews` в
+`src/web/features/download/previews.ts`.
+
 PDF ищет браузер так: `$CHROMIUM_PATH` → системный Chromium/Chrome →
 `bunx playwright install chromium`.
 
@@ -133,7 +141,11 @@ tests/               vitest, повторяет структуру src/; fixture
   DOM, в `web` нет Node;
 - biome (`noRestrictedImports` в `biome.jsonc`) запрещает импорты против
   направления слоёв и зависимости сборки в `web`; типы схем `web` берёт из
-  `@/core/types`.
+  `@core/types`.
+
+Алиасы `@core`, `@web`, `@build`, `@tests` используются в `web` и `tests` —
+их разрешают Vite и vitest. `core` и `build` исполняет node напрямую (CLI и
+`vite.config.ts`), он алиасов не знает, поэтому там импорты относительные.
 
 Типографика задаётся ролями, а не размерами: `display`, `lead`, `heading`,
 `title`, `copy`, `annotation`, `label` — компонент `<Text variant>` из

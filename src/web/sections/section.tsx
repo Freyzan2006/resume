@@ -1,8 +1,8 @@
 import type { ReactNode } from "react"
 
-import type { Locale } from "@/core/types"
-import { Separator } from "@/web/ui/separator"
-import { Text } from "@/web/ui/typography"
+import type { Locale } from "@core/types"
+import { Separator } from "@web/ui/separator"
+import { Text } from "@web/ui/typography"
 
 /** Every section gets the whole language version and picks what it renders. */
 export type SectionProps = { locale: Locale }

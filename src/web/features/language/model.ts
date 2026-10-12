@@ -1,6 +1,6 @@
 import site from "virtual:resume"
 
-import { localePath } from "@/core/pages"
+import { localePath } from "@core/pages"
 
 const [primary] = site.locales
 

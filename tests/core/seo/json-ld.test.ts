@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
-import { personJsonLd, serializeJsonLd } from "../../../src/core/seo/json-ld.ts"
-import { siteFixture } from "../../fixtures/site.ts"
+
+import { personJsonLd, serializeJsonLd } from "@core/seo/json-ld.ts"
+import { siteFixture } from "@tests/fixtures/site.ts"
 
 describe("personJsonLd", () => {
   it("builds a schema.org Person without contacts", () => {

@@ -1,4 +1,4 @@
-import { formatPeriod } from "@/core/period"
+import { formatPeriod } from "@core/period"
 
 import { joinParts, Section, type SectionProps } from "./section"
 import { TimelineItem, TitleLink } from "./timeline"

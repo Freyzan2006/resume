@@ -1,7 +1,8 @@
 import { mergeProps } from "@base-ui/react/merge-props"
 import { useRender } from "@base-ui/react/use-render"
 import { cva, type VariantProps } from "class-variance-authority"
-import { cn, type TextRole } from "@/web/lib/utils"
+
+import { cn, type TextRole } from "@web/lib/utils"
 
 /**
  * Text roles. Sizes, line heights and weights live in the `--text-<role>`

@@ -14,7 +14,10 @@ export default defineConfig({
   plugins: [resume({ dir: ASSETS_DIR }), react(), tailwindcss()],
   resolve: {
     alias: {
-      "@": resolve(import.meta.dirname, "./src"),
+      "@core": resolve(import.meta.dirname, "src/core"),
+      "@web": resolve(import.meta.dirname, "src/web"),
+      "@build": resolve(import.meta.dirname, "src/build"),
+      "@tests": resolve(import.meta.dirname, "tests"),
     },
   },
   test: {

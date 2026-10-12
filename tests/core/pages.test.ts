@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { langOfPath, localePath } from "../../src/core/pages.ts"
+import { langOfPath, localePath } from "@core/pages.ts"
 
 describe("localePath", () => {
   it("puts the primary language at the root and the rest in folders", () => {

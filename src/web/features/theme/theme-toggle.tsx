@@ -2,7 +2,7 @@ import { wrap } from "@reatom/core"
 import { reatomComponent } from "@reatom/react"
 import { Moon, Sun } from "lucide-react"
 
-import { Button } from "@/web/ui/button"
+import { Button } from "@web/ui/button"
 
 import { resolvedTheme, toggleTheme } from "./model"
 

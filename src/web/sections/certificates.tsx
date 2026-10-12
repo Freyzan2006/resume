@@ -1,4 +1,4 @@
-import { formatDate } from "@/core/period"
+import { formatDate } from "@core/period"
 
 import { Section, type SectionProps } from "./section"
 import { TimelineItem, TitleLink } from "./timeline"

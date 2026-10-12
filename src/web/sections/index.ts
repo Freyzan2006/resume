@@ -1,6 +1,6 @@
 import type { ComponentType } from "react"
 
-import type { SectionName } from "@/core/types"
+import type { SectionName } from "@core/types"
 
 import { CertificatesSection } from "./certificates"
 import { EducationSection } from "./education"

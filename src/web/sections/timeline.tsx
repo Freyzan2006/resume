@@ -1,6 +1,8 @@
 import type { ReactNode } from "react"
-import { Badge } from "@/web/ui/badge"
-import { Text } from "@/web/ui/typography"
+
+import { Badge } from "@web/ui/badge"
+import { Text } from "@web/ui/typography"
+
 import { Markdown } from "./section"
 
 export function TimelineItem({
