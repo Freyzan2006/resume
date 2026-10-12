@@ -93,7 +93,8 @@ export function Downloads({
           render={<a href={primary.href} download={primary.filename} />}
         >
           <DownloadIcon data-icon="inline-start" />
-          {labels.download} {primary.label}
+          <span className="max-sm:sr-only">{labels.download} </span>
+          {primary.label}
         </Button>
         {more}
       </ButtonGroup>

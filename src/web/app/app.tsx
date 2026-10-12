@@ -9,7 +9,7 @@ import { Header, sections } from "@web/sections"
 export function App() {
   return (
     <main className="mx-auto flex max-w-3xl flex-col gap-8 px-6 py-10 print:max-w-none print:gap-5 print:p-0">
-      <div className="-mb-4 flex justify-end gap-2 print:hidden">
+      <div className="-mb-4 flex justify-end gap-1 sm:gap-2 print:hidden">
         <LanguageSwitcher />
         {/* Exported files are written after `vite build`, so prod only. */}
         {import.meta.env.PROD && (

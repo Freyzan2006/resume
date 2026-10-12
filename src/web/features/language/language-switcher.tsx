@@ -26,7 +26,8 @@ export function LanguageSwitcher() {
               buttonVariants({
                 variant: current ? "secondary" : "ghost",
                 size: "sm",
-              })
+              }),
+              "max-sm:px-2"
             )}
           >
             {lang.toUpperCase()}
