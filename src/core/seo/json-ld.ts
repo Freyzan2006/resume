@@ -11,6 +11,8 @@ function compact(value: Record<string, unknown>) {
   )
 }
 
+const withoutSlash = (link?: string) => link?.replace(/\/$/, "")
+
 const unique = (values: (string | undefined)[]) => [
   ...new Set(values.filter((value): value is string => !!value)),
 ]
@@ -31,7 +33,7 @@ export function personJsonLd({ url }: SiteData, { resume }: Locale) {
     sameAs: unique([
       basics.url,
       ...basics.profiles.map((profile) => profile.url),
-    ]).filter((link) => link !== url),
+    ]).filter((link) => withoutSlash(link) !== withoutSlash(url)),
     address:
       location &&
       compact({

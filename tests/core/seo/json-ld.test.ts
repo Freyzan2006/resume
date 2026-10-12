@@ -28,6 +28,17 @@ describe("personJsonLd", () => {
   })
 })
 
+describe("personJsonLd: the site itself", () => {
+  it("is not listed among the person's other pages", () => {
+    const site = siteFixture("https://a.dev/", "ru")
+    site.locales[0].resume.basics.url = "https://a.dev"
+
+    expect(personJsonLd(site, site.locales[0]).sameAs).toEqual([
+      "https://github.com/ivan",
+    ])
+  })
+})
+
 describe("serializeJsonLd", () => {
   it("cannot close the script element", () => {
     expect(serializeJsonLd({ a: "</script>" })).not.toContain("</")
