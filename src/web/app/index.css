@@ -6,7 +6,7 @@
 
 @page {
   size: A4;
-  margin: 14mm 16mm;
+  margin: 10mm 16mm;
 }
 
 @custom-variant dark (&:is(.dark *));
@@ -51,8 +51,8 @@
     --text-lead: 12pt;
     --text-heading: 7.5pt;
     --text-title: 10.5pt;
-    --text-copy: 9.5pt;
-    --text-copy--line-height: 1.45;
+    --text-copy: 9pt;
+    --text-copy--line-height: 1.35;
     --text-annotation: 7.5pt;
     --text-label: 9pt;
   }

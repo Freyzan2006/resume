@@ -13,7 +13,7 @@ describe("cardContent", () => {
       lang: "en",
       name: "Ivan",
       label: "Dev",
-      facts: ["Moscow", "Experience: 6 years 1 month"],
+      facts: ["Moscow", "Experience: 6 years"],
       skills: ["React", "TS", "Vite"],
       host: "a.dev",
     })

@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../schemas/resume.schema.json
+# yaml-language-server: $schema=../../../schemas/resume.schema.json
 #
 # Резюме в формате JSON Resume (https://jsonresume.org/schema), записанное в YAML.
 # Поля summary, description и highlights поддерживают markdown.

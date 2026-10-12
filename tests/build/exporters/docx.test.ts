@@ -33,9 +33,9 @@ async function readDocx(file: string) {
 }
 
 describe("exportDocx", () => {
-  it("exports every language of the real assets/ as a Word document", async () => {
+  it("exports every language of the example assets/ as a Word document", async () => {
     const { data, sources } = await loadSite(
-      resolve(import.meta.dirname, "../../../assets")
+      resolve(import.meta.dirname, "../../../examples/assets")
     )
 
     for (const locale of data.locales) {

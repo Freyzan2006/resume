@@ -5,43 +5,58 @@ import { formatDuration, periodMonths, totalMonths } from "@core/experience.ts"
 const now = new Date(2026, 9, 9) // October 2026
 
 describe("periodMonths", () => {
-  it("counts both edge months", () => {
+  it("counts from the start month up to the end month, as hh.ru does", () => {
     expect(
-      periodMonths({ startDate: "2022-03", endDate: "2022-03" }, now)
-    ).toBe(1)
+      periodMonths({ startDate: "2024-02", endDate: "2026-04" }, now)
+    ).toBe(26)
     expect(
       periodMonths({ startDate: "2019-09", endDate: "2022-02" }, now)
-    ).toBe(30)
+    ).toBe(29)
   })
 
   it("runs an open period up to the current month", () => {
-    expect(periodMonths({ startDate: "2026-01" }, now)).toBe(10)
+    expect(periodMonths({ startDate: "2026-04" }, now)).toBe(6)
   })
 
   it("reads bare years as whole years and ignores days", () => {
     expect(periodMonths({ startDate: "2015", endDate: "2016" }, now)).toBe(24)
     expect(
       periodMonths({ startDate: "2020-01-31", endDate: "2020-02-01" }, now)
-    ).toBe(2)
+    ).toBe(1)
   })
 
-  it("is zero without a start or for a reversed period", () => {
+  it("is zero without a start, within one month or for a reversed period", () => {
     expect(periodMonths({ endDate: "2020" }, now)).toBe(0)
+    expect(
+      periodMonths({ startDate: "2022-03", endDate: "2022-03" }, now)
+    ).toBe(0)
     expect(periodMonths({ startDate: "2021", endDate: "2020" }, now)).toBe(0)
   })
 })
 
 describe("totalMonths", () => {
+  it("matches hh.ru for back-to-back jobs", () => {
+    expect(
+      totalMonths(
+        [
+          { startDate: "2026-04" },
+          { startDate: "2024-02", endDate: "2026-04" },
+        ],
+        now
+      )
+    ).toBe(32)
+  })
+
   it("sums separate periods", () => {
     expect(
       totalMonths(
         [
           { startDate: "2019-09", endDate: "2022-02" },
-          { startDate: "2022-03" },
+          { startDate: "2022-06" },
         ],
         now
       )
-    ).toBe(30 + 56)
+    ).toBe(29 + 52)
   })
 
   it("counts overlapping months once", () => {
@@ -54,7 +69,7 @@ describe("totalMonths", () => {
         ],
         now
       )
-    ).toBe(18)
+    ).toBe(17)
   })
 
   it("is zero for no work", () => {

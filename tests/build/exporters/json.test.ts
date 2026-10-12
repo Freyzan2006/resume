@@ -51,9 +51,9 @@ describe("exportJson", () => {
     })
   })
 
-  it("exports the real assets/ as a valid resume", async () => {
+  it("exports the example assets/ as a valid resume", async () => {
     const { sources } = await loadSite(
-      resolve(import.meta.dirname, "../../../assets")
+      resolve(import.meta.dirname, "../../../examples/assets")
     )
 
     for (const source of Object.values(sources)) {

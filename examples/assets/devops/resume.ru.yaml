@@ -1,4 +1,4 @@
-# yaml-language-server: $schema=../../schemas/resume.schema.json
+# yaml-language-server: $schema=../../../schemas/resume.schema.json
 #
 # Второй профиль: то же резюме, но под DevOps. Чтобы собрать его, укажите
 # в assets/config.yaml: profile: devops

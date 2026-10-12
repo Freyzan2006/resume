@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=../../schemas/config.schema.json
+#
+# Настройки сайта. Файл необязательный: без него действуют значения по умолчанию.
+#
+# Структура assets/:
+#   config.yaml                    этот файл
+#   <профиль>/resume.<язык>.yaml   по папке на специальность, по файлу на язык
+
+# Какое резюме собирать — папка в assets/. Можно не указывать, если папка одна.
+profile: frontend
+
+# Адрес сайта. Нужен для canonical, hreflang и sitemap.xml; без него
+# поисковые теги, которым нужен полный URL, не выводятся.
+url: https://example.github.io/resume/
+
+# Основной язык: его версия открывается по умолчанию. Остальные языки берутся
+# из файлов resume.<язык>.yaml профиля и переключаются на сайте.
+lang: ru
+
+# Какие разделы показывать и в каком порядке.
+sections: [summary, work, projects, skills, education, certificates, languages]
+
+# В каких форматах резюме можно скачать с сайта: pdf, docx (Word), json (JSON Resume), md.
+formats: [pdf, docx, json, md]
+
+# Свои подписи вместо встроенных, по языкам, например:
+# labels:
+#   ru:
+#     work: Карьера

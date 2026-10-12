@@ -1,0 +1,120 @@
+# yaml-language-server: $schema=../../schemas/resume.schema.json
+#
+# Резюме в формате JSON Resume (https://jsonresume.org/schema), записанное в YAML.
+# Поля summary, description и highlights поддерживают markdown.
+# Даты: YYYY, YYYY-MM или YYYY-MM-DD; пустой endDate — «по настоящее время».
+
+basics:
+  name: Тимур Тукфатуллин
+  label: Full Stack AI Engineer
+  summary: |
+    Full Stack разработчик, которому важно, чтобы продукт работал стабильно
+    и был удобен. Делал UI Kit, сокративший количество действий пользователя,
+    ускорил запуск продукта для новых клиентов **в 2 раза** и выстроил онбординг
+    новых разработчиков. Открыт к полной занятости: удалённо, гибрид или офис
+    в Ташкенте.
+  email: freyzan2006@gmail.com
+  phone: "+998 90 347 43 01"
+  url: https://timurtukfatullin.uz
+  location:
+    city: Ташкент
+    countryCode: UZ
+  profiles:
+    - network: GitHub
+      username: Freyzan2006
+      url: https://github.com/Freyzan2006
+    - network: LinkedIn
+      url: https://www.linkedin.com/in/тимур-тукфатуллин-220065365
+    - network: Telegram
+      username: timur_tukfatullin
+      url: https://t.me/timur_tukfatullin
+
+work:
+  - name: Ksi
+    position: Full Stack Developer
+    description: Software Development Services
+    location: Удалённо
+    startDate: 2026-04
+    highlights:
+      - Вёл разработку AI-платформы для анализа данных, автоматизировав процессы,
+        которые ранее требовали участия 3 сотрудников, и сократив затраты на
+        ручную обработку до 1 сотрудника.
+      - Оптимизировал работу RPC-механизма при высоких нагрузках на CPU, повысив
+        производительность и стабильность системы.
+      - Разрабатывал и развивал образовательную платформу, которой пользуются
+        более 10 000 студентов.
+      - Настроил систему мониторинга и алертинга, что позволило своевременно
+        выявлять проблемы и снизить количество ошибок в production.
+      - Разработал внутренние библиотеки и пакеты, стандартизировав процессы
+        разработки и поддержки продукта и сократив затраты времени на них в 2 раза.
+    keywords:
+      [PyTorch, Python, FastAPI, Redis, PostgreSQL, TanStack Start, React, Vite, TypeScript]
+
+  - name: Seiko
+    position: Full Stack Developer
+    description: Software Development Services
+    location: Удалённо
+    startDate: 2024-02
+    endDate: 2026-04
+    highlights:
+      - Поддерживал и развивал продукты компании, обеспечивая их стабильную
+        работу и своевременное устранение технических проблем.
+      - Разработал UI Kit для основного продукта компании, стандартизировав
+        интерфейсные компоненты и улучшив UI/UX. Это позволило сократить
+        количество действий и кликов, необходимых пользователям для выполнения
+        ключевых операций.
+      - Автоматизировал и стандартизировал развёртывание и настройку
+        production-окружения для различных клиентов и продуктов, что сократило
+        время первичного запуска продукта в 2 раза.
+      - Проводил менторинг новых сотрудников и выстроил процесс их онбординга,
+        позволяющий быстрее погружаться в кодовую базу и приступать к выполнению
+        бизнес-задач.
+    keywords:
+      [Node.js, NestJS, Redis, PostgreSQL, Docker, Next.js, TypeScript, RabbitMQ]
+
+education:
+  - institution: Ташкентский государственный технический университет имени Ислама Каримова
+    studyType: Высшее
+    area: Факультет электроники и автоматики, автоматизация создания продукта с AI
+    endDate: 2028
+
+  - institution: School 21 (Sber)
+    studyType: PEER
+    area: DevOps engineer
+    endDate: 2026
+
+skills:
+  - name: Языки программирования
+    keywords: [Python (FastAPI), Node.js (NestJS), Golang, Java (Spring Boot)]
+  - name: ML-инструменты
+    keywords: [PyTorch, Pandas, NumPy, TensorFlow]
+  - name: SQL
+    keywords: [PostgreSQL, MySQL]
+  - name: NoSQL
+    keywords: [MongoDB]
+  - name: Инструменты
+    keywords:
+      - Linux
+      - Git
+      - RabbitMQ
+      - Kafka
+      - Celery
+      - Redis
+      - Docker
+      - Docker Compose
+      - Kubernetes (k8s)
+      - Grafana
+      - Nginx
+      - CI/CD
+      - Prometheus
+      - Loki
+      - Terraform
+      - Ansible
+
+languages:
+  - language: Русский
+    fluency: Родной
+  - language: Английский
+    fluency: B1 — Средний
+  - language: Узбекский
+    fluency: B1 — Средний

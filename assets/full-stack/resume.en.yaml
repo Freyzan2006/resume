@@ -1,0 +1,115 @@
+# yaml-language-server: $schema=../../schemas/resume.schema.json
+#
+# English version of resume.ru.yaml — same JSON Resume structure.
+
+basics:
+  name: Timur Tukfatullin
+  label: Full Stack AI Engineer
+  summary: |
+    A full stack developer who cares that the product runs reliably and is
+    easy to use. Built a UI kit that cut the number of user actions, made
+    product launches for new clients **2× faster** and set up onboarding for new
+    developers. Open to full-time work: remote, hybrid or on-site in Tashkent.
+  email: freyzan2006@gmail.com
+  phone: "+998 90 347 43 01"
+  url: https://timurtukfatullin.uz
+  location:
+    city: Tashkent
+    countryCode: UZ
+  profiles:
+    - network: GitHub
+      username: Freyzan2006
+      url: https://github.com/Freyzan2006
+    - network: LinkedIn
+      url: https://www.linkedin.com/in/тимур-тукфатуллин-220065365
+    - network: Telegram
+      username: timur_tukfatullin
+      url: https://t.me/timur_tukfatullin
+
+work:
+  - name: Ksi
+    position: Full Stack Developer
+    description: Software Development Services
+    location: Remote
+    startDate: 2026-04
+    highlights:
+      - Led the development of an AI platform for data analysis, automating
+        processes that previously required 3 employees and reducing manual
+        processing to 1 employee.
+      - Optimized the RPC mechanism under high CPU load, improving system
+        performance and stability.
+      - Developed and evolved an educational platform used by more than 10,000
+        students.
+      - Set up monitoring and alerting, which made it possible to detect issues
+        in time and reduce the number of errors in production.
+      - Built internal libraries and packages that standardized product
+        development and maintenance, cutting the time spent on them by half.
+    keywords:
+      [PyTorch, Python, FastAPI, Redis, PostgreSQL, TanStack Start, React, Vite, TypeScript]
+
+  - name: Seiko
+    position: Full Stack Developer
+    description: Software Development Services
+    location: Remote
+    startDate: 2024-02
+    endDate: 2026-04
+    highlights:
+      - Maintained and evolved the company's products, ensuring their stable
+        operation and timely resolution of technical issues.
+      - Built a UI kit for the company's main product, standardizing interface
+        components and improving UI/UX. This reduced the number of actions and
+        clicks users need to complete key operations.
+      - Automated and standardized the deployment and configuration of
+        production environments for various clients and products, halving the
+        time of a product's initial launch.
+      - Mentored new employees and set up their onboarding process, helping them
+        get familiar with the codebase and start on business tasks faster.
+    keywords:
+      [Node.js, NestJS, Redis, PostgreSQL, Docker, Next.js, TypeScript, RabbitMQ]
+
+education:
+  - institution: Islam Karimov Tashkent State Technical University
+    studyType: Higher education
+    area: Faculty of Electronics and Automation, automating product development with AI
+    endDate: 2028
+
+  - institution: School 21 (Sber)
+    studyType: PEER
+    area: DevOps engineer
+    endDate: 2026
+
+skills:
+  - name: Programming languages
+    keywords: [Python (FastAPI), Node.js (NestJS), Golang, Java (Spring Boot)]
+  - name: ML tools
+    keywords: [PyTorch, Pandas, NumPy, TensorFlow]
+  - name: SQL
+    keywords: [PostgreSQL, MySQL]
+  - name: NoSQL
+    keywords: [MongoDB]
+  - name: Tools
+    keywords:
+      - Linux
+      - Git
+      - RabbitMQ
+      - Kafka
+      - Celery
+      - Redis
+      - Docker
+      - Docker Compose
+      - Kubernetes (k8s)
+      - Grafana
+      - Nginx
+      - CI/CD
+      - Prometheus
+      - Loki
+      - Terraform
+      - Ansible
+
+languages:
+  - language: Russian
+    fluency: Native
+  - language: English
+    fluency: B1 — Intermediate
+  - language: Uzbek
+    fluency: B1 — Intermediate

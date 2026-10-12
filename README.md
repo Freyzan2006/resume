@@ -3,6 +3,10 @@
 Сайт-резюме и PDF из данных в `assets/`. Чтобы сделать резюме под себя,
 достаточно поменять только эту папку.
 
+Полный пример лежит в `examples/assets/` (резюме-заглушка: два профиля, три
+языка, все разделы). Начать проще всего с него: скопировать в `assets/` и
+заменить данные. Посмотреть пример вживую: `bun run dev:example`.
+
 ## Контент
 
 ```
@@ -68,15 +72,19 @@ VS Code подсказывает поля и подчёркивает ошибк
 ## Команды
 
 ```sh
-bun run dev         # сайт с live-reload при правке assets/
-bun run build       # dist/ + файлы для скачивания, картинки превью, prerender
-bun run build:site  # только сайт: без файлов для скачивания и prerender
-bun run export      # шаги после сборки для уже собранного dist/
-bun run test        # vitest
-bun run schema      # перегенерировать schemas/ после правки схем
-bun run check       # biome: формат, импорты, классы Tailwind, линт (с исправлением)
-bun run ci          # biome ci + typecheck + knip + тесты
+bun run dev            # сайт с live-reload при правке assets/
+bun run build          # dist/ + файлы для скачивания, картинки превью, prerender
+bun run dev:example    # то же для примера из examples/assets
+bun run build:example
+bun run build:site     # только сайт: без файлов для скачивания и prerender
+bun run export         # шаги после сборки для уже собранного dist/
+bun run test           # vitest
+bun run schema         # перегенерировать schemas/ после правки схем
+bun run check          # biome: формат, импорты, классы Tailwind, линт (с исправлением)
+bun run ci             # biome ci + typecheck + knip + тесты
 ```
+
+Любую другую папку с контентом можно собрать так: `RESUME_ASSETS=путь bun run build`.
 
 Git-хуки (lefthook, ставятся при `bun install`): перед коммитом — biome по
 изменённым файлам, typecheck и knip; перед пушем — `bun run ci`. В GitHub те же
@@ -115,6 +123,7 @@ PDF ищет браузер так: `$CHROMIUM_PATH` → системный Chro
 
 ```
 assets/              контент — единственное, что меняется в форке
+examples/assets/     пример контента; на нём же работают тесты
 schemas/             JSON Schema для редактора (генерируется: bun run schema)
 src/
   core/              домен: схемы, форматы, подписи, даты. Чистый TypeScript

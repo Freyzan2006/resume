@@ -7,7 +7,7 @@ import { renderJsonSchemas, SCHEMAS_DIR } from "@build/json-schema.ts"
 import { loadSite, ResumeError } from "@build/load.ts"
 
 const ROOT = resolve(import.meta.dirname, "../..")
-const ASSETS = join(ROOT, "assets")
+const EXAMPLE = join(ROOT, "examples/assets")
 
 let dir: string
 
@@ -35,12 +35,20 @@ async function problemsOf(promise: Promise<unknown>): Promise<string> {
 
 const minimal = (name = "A") => `basics: { name: ${name} }`
 
-describe("loadSite: the real assets/", () => {
-  it("loads without warnings", async () => {
-    const { data, warnings } = await loadSite(ASSETS)
+describe("loadSite: the content of the repository", () => {
+  it("loads the example in examples/assets without warnings", async () => {
+    const { data, warnings } = await loadSite(EXAMPLE)
 
-    expect(data.locales[0].resume.basics.name).toBeTruthy()
+    expect(data.locales.map((locale) => locale.lang)).toEqual([
+      "ru",
+      "en",
+      "uz",
+    ])
     expect(warnings).toEqual([])
+  })
+
+  it("loads your resume in assets/", async () => {
+    await expect(loadSite(join(ROOT, "assets"))).resolves.toBeTruthy()
   })
 })
 
@@ -334,8 +342,8 @@ describe("loadSite: content", () => {
     expect(warnings).toEqual([expect.stringMatching(/awards/)])
   })
 
-  it("copies cleanly from the real assets/", async () => {
-    await cp(ASSETS, dir, { recursive: true })
+  it("copies cleanly from the example", async () => {
+    await cp(EXAMPLE, dir, { recursive: true })
 
     await expect(loadSite(dir)).resolves.toBeTruthy()
   })

@@ -55,9 +55,9 @@ describe("resumeMarkdown", () => {
   it("lays out jobs with period, duration and stack", () => {
     expect(markdown(["work"])).toContain(
       [
-        "## Experience · 2 years",
+        "## Experience · 1 year 11 months",
         "### Engineer · [Acme](https://acme.dev)",
-        "_2020 — 12.2021 · 2 yrs_",
+        "_2020 — 12.2021 · 1 yr 11 mths_",
         "- Cut load time by **40%**",
         "`React`",
       ].join("\n\n")

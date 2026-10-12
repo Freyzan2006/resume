@@ -15,7 +15,8 @@ import { IMAGE_EXTENSIONS, imageType } from "./images.ts"
 // assets/
 //   config.yaml                      optional: profile, lang, sections, …
 //   <profile>/resume.<lang>.yaml     one folder per specialty, one file per language
-export const ASSETS_DIR = "assets"
+// RESUME_ASSETS builds another folder, e.g. the demo in examples/assets.
+export const ASSETS_DIR = process.env.RESUME_ASSETS || "assets"
 const CONFIG_FILES = ["config.yaml", "config.yml", "config.json"]
 
 // YAML 1.2 is a superset of JSON, so an existing JSON Resume file works as is.

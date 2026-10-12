@@ -1,12 +1,17 @@
 import type { Period } from "./resume-schema.ts"
 
-/** Months since year 0: "2022-03" → 2022 * 12 + 2. A bare year is its January or December. */
-function monthIndex(date: string, edge: "start" | "end") {
+/** Months since year 0 at a month's start: "2022-03" → 2022 * 12 + 2. */
+function monthIndex(date: string) {
   const [year, month] = date.split("-").map(Number)
-  return year * 12 + (month ? month - 1 : edge === "start" ? 0 : 11)
+  return year * 12 + (month ? month - 1 : 0)
 }
 
-/** Inclusive month range of a period; a missing endDate means `now`. */
+/**
+ * Half-open month range [start, end) of a period, as hh.ru counts: from the
+ * start month up to, not including, the end month (February–April is two
+ * months). A bare end year runs through its December; a missing endDate
+ * means up to the current month.
+ */
 function monthRange(
   { startDate, endDate }: Period,
   now: Date
@@ -14,17 +19,17 @@ function monthRange(
   if (!startDate) {
     return undefined
   }
-  const start = monthIndex(startDate, "start")
-  const end = endDate
-    ? monthIndex(endDate, "end")
-    : now.getFullYear() * 12 + now.getMonth()
-  return end >= start ? [start, end] : undefined
+  const start = monthIndex(startDate)
+  const end = !endDate
+    ? now.getFullYear() * 12 + now.getMonth()
+    : monthIndex(endDate) + (/^\d{4}$/.test(endDate) ? 12 : 0)
+  return end > start ? [start, end] : undefined
 }
 
-/** Length of a period in months, counting both edge months (as hh.ru does). */
+/** Length of a period in months. */
 export function periodMonths(period: Period, now: Date): number {
   const range = monthRange(period, now)
-  return range ? range[1] - range[0] + 1 : 0
+  return range ? range[1] - range[0] : 0
 }
 
 /** Total months across periods; overlapping months are counted once. */
@@ -42,12 +47,12 @@ export function totalMonths(periods: Period[], now: Date): number {
       continue
     }
     if (current) {
-      total += current[1] - current[0] + 1
+      total += current[1] - current[0]
     }
     current = [start, end]
   }
   if (current) {
-    total += current[1] - current[0] + 1
+    total += current[1] - current[0]
   }
   return total
 }

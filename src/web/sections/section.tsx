@@ -15,7 +15,7 @@ export function Section({
   children: ReactNode
 }) {
   return (
-    <section className="flex break-inside-avoid-page flex-col gap-4 print:gap-2.5">
+    <section className="flex break-inside-avoid-page flex-col gap-4 print:gap-2">
       <div className="flex items-center gap-3">
         <Text variant="heading" className="whitespace-nowrap">
           {title}

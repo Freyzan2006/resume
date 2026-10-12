@@ -45,10 +45,13 @@ export function TimelineItem({
         />
       )}
       {tags.length > 0 && (
-        <ul className="flex flex-wrap gap-1.5">
+        <ul className="flex flex-wrap gap-1.5 print:gap-1">
           {tags.map((tag) => (
             <li key={tag}>
-              <Badge variant="secondary" className="font-mono">
+              <Badge
+                variant="secondary"
+                className="font-mono print:h-4 print:px-1.5 print:text-annotation"
+              >
                 {tag}
               </Badge>
             </li>

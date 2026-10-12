@@ -2,7 +2,7 @@
 // build/exporters/ that writes dist/resume.<lang>.<extension> after `vite build`.
 const formats = {
   pdf: { extension: "pdf", label: "PDF" },
-  json: { extension: "json", label: "JSON Resume" },
+  json: { extension: "json", label: "JSON" },
   md: { extension: "md", label: "Markdown" },
   docx: { extension: "docx", label: "Word" },
 } as const

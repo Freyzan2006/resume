@@ -7,7 +7,7 @@
 #   <профиль>/resume.<язык>.yaml   по папке на специальность, по файлу на язык
 
 # Какое резюме собирать — папка в assets/. Можно не указывать, если папка одна.
-profile: frontend
+profile: full-stack
 
 # Адрес сайта. Нужен для canonical, hreflang и sitemap.xml; без него
 # поисковые теги, которым нужен полный URL, не выводятся.
@@ -18,7 +18,7 @@ url: https://freyzan2006.github.io/
 lang: ru
 
 # Какие разделы показывать и в каком порядке.
-sections: [summary, work, projects, skills, education, certificates, languages]
+sections: [summary, work, skills, education, languages]
 
 # В каких форматах резюме можно скачать с сайта: pdf, docx (Word), json (JSON Resume), md.
 formats: [pdf, docx, json, md]

@@ -1,0 +1,122 @@
+# yaml-language-server: $schema=../../schemas/resume.schema.json
+#
+# Oʻzbekcha (lotin yozuvi) versiya — resume.ru.yaml bilan bir xil tuzilma.
+# ʻ (U+02BB) oʻ/gʻ da, ʼ (U+02BC) tutuq belgisi sifatida.
+
+basics:
+  name: Timur Tukfatullin
+  label: Full Stack AI Engineer
+  summary: |
+    Mahsulot barqaror ishlashi va qulay boʻlishini muhim deb biladigan Full Stack
+    dasturchi. Foydalanuvchi harakatlari sonini qisqartirgan UI Kit yaratdim,
+    yangi mijozlar uchun mahsulotni ishga tushirishni **2 baravar** tezlashtirdim
+    va yangi dasturchilar uchun onboarding jarayonini yoʻlga qoʻydim. Toʻliq
+    bandlikka ochiqman: masofaviy, gibrid yoki Toshkentdagi ofisda.
+  email: freyzan2006@gmail.com
+  phone: "+998 90 347 43 01"
+  url: https://timurtukfatullin.uz
+  location:
+    city: Toshkent
+    countryCode: UZ
+  profiles:
+    - network: GitHub
+      username: Freyzan2006
+      url: https://github.com/Freyzan2006
+    - network: LinkedIn
+      url: https://www.linkedin.com/in/тимур-тукфатуллин-220065365
+    - network: Telegram
+      username: timur_tukfatullin
+      url: https://t.me/timur_tukfatullin
+
+work:
+  - name: Ksi
+    position: Full Stack Developer
+    description: Software Development Services
+    location: Masofaviy
+    startDate: 2026-04
+    highlights:
+      - Maʼlumotlarni tahlil qilish uchun AI-platforma ishlab chiqishga
+        rahbarlik qildim, ilgari 3 nafar xodim ishtirokini talab qilgan
+        jarayonlarni avtomatlashtirib, qoʻlda ishlov berish xarajatlarini
+        1 nafar xodimgacha qisqartirdim.
+      - CPU yuqori yuklama ostida ishlaganda RPC mexanizmi ishini
+        optimallashtirib, tizim unumdorligi va barqarorligini oshirdim.
+      - 10 000 dan ortiq talaba foydalanadigan taʼlim platformasini ishlab
+        chiqdim va rivojlantirdim.
+      - Monitoring va alerting tizimini sozladim, bu muammolarni oʻz vaqtida
+        aniqlash va productionda xatolar sonini kamaytirish imkonini berdi.
+      - Ichki kutubxonalar va paketlar ishlab chiqib, mahsulotni ishlab chiqish
+        va qoʻllab-quvvatlash jarayonlarini standartlashtirdim hamda ularga
+        sarflanadigan vaqtni 2 baravar qisqartirdim.
+    keywords:
+      [PyTorch, Python, FastAPI, Redis, PostgreSQL, TanStack Start, React, Vite, TypeScript]
+
+  - name: Seiko
+    position: Full Stack Developer
+    description: Software Development Services
+    location: Masofaviy
+    startDate: 2024-02
+    endDate: 2026-04
+    highlights:
+      - Kompaniya mahsulotlarini qoʻllab-quvvatladim va rivojlantirdim,
+        ularning barqaror ishlashi va texnik muammolarning oʻz vaqtida bartaraf
+        etilishini taʼminladim.
+      - Kompaniyaning asosiy mahsuloti uchun UI Kit ishlab chiqib, interfeys
+        komponentlarini standartlashtirdim va UI/UX ni yaxshiladim. Bu
+        foydalanuvchilar asosiy amallarni bajarishi uchun kerak boʻladigan
+        harakatlar va bosishlar sonini kamaytirdi.
+      - Turli mijozlar va mahsulotlar uchun production muhitini joylashtirish va
+        sozlashni avtomatlashtirib, standartlashtirdim, bu mahsulotni ilk bor
+        ishga tushirish vaqtini 2 baravar qisqartirdi.
+      - Yangi xodimlarga mentorlik qildim va ularning onboarding jarayonini
+        yoʻlga qoʻydim, bu ularga kod bazasini tezroq oʻzlashtirib, biznes
+        vazifalarni bajarishga kirishish imkonini beradi.
+    keywords:
+      [Node.js, NestJS, Redis, PostgreSQL, Docker, Next.js, TypeScript, RabbitMQ]
+
+education:
+  - institution: Islom Karimov nomidagi Toshkent davlat texnika universiteti
+    studyType: Oliy
+    area: Elektronika va avtomatika fakulteti, AI yordamida mahsulot yaratishni avtomatlashtirish
+    endDate: 2028
+
+  - institution: School 21 (Sber)
+    studyType: PEER
+    area: DevOps engineer
+    endDate: 2026
+
+skills:
+  - name: Dasturlash tillari
+    keywords: [Python (FastAPI), Node.js (NestJS), Golang, Java (Spring Boot)]
+  - name: ML vositalari
+    keywords: [PyTorch, Pandas, NumPy, TensorFlow]
+  - name: SQL
+    keywords: [PostgreSQL, MySQL]
+  - name: NoSQL
+    keywords: [MongoDB]
+  - name: Vositalar
+    keywords:
+      - Linux
+      - Git
+      - RabbitMQ
+      - Kafka
+      - Celery
+      - Redis
+      - Docker
+      - Docker Compose
+      - Kubernetes (k8s)
+      - Grafana
+      - Nginx
+      - CI/CD
+      - Prometheus
+      - Loki
+      - Terraform
+      - Ansible
+
+languages:
+  - language: Rus tili
+    fluency: Ona tili
+  - language: Ingliz tili
+    fluency: B1 — Oʻrta
+  - language: Oʻzbek tili
+    fluency: B1 — Oʻrta

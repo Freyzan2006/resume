@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:example": "RESUME_ASSETS=examples/assets vite",
     "build": "tsc -b && vite build && node src/build/cli/export.ts",
+    "build:example": "RESUME_ASSETS=examples/assets bun run build",
     "build:site": "tsc -b && vite build",
     "preview": "vite preview",
     "export": "node src/build/cli/export.ts",
