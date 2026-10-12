@@ -1,6 +1,7 @@
+import { joinParts } from "@core/resume-format"
 import { Text } from "@web/ui/typography"
 
-import { joinParts, Section, type SectionProps } from "./section"
+import { Section, type SectionProps } from "./section"
 
 export function SkillsSection({ locale: { resume, labels } }: SectionProps) {
   if (resume.skills.length === 0) {

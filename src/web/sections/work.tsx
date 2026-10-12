@@ -1,7 +1,6 @@
-import { formatDuration, periodMonths, totalMonths } from "@core/experience"
-import { formatPeriod } from "@core/period"
+import { jobPeriod, joinParts, workTitle } from "@core/resume-format"
 
-import { joinParts, Section, type SectionProps } from "./section"
+import { Section, type SectionProps } from "./section"
 import { TimelineItem, TitleLink } from "./timeline"
 
 export function WorkSection({
@@ -12,42 +11,25 @@ export function WorkSection({
   }
 
   // Counted when the page is viewed, so "present" stays current without a rebuild.
-  const now = new Date()
-  const total = totalMonths(resume.work, now)
-
-  const title =
-    total > 0
-      ? `${labels.work} · ${formatDuration(total, lang, { units: labels })}`
-      : labels.work
+  const context = { lang, labels, now: new Date() }
 
   return (
-    <Section title={title}>
-      {resume.work.map((job) => {
-        const months = periodMonths(job, now)
-        return (
-          <TimelineItem
-            key={`${job.name}-${job.startDate}`}
-            title={
-              <>
-                {job.position} · <TitleLink url={job.url}>{job.name}</TitleLink>
-              </>
-            }
-            subtitle={joinParts(job.description, job.location)}
-            period={joinParts(
-              formatPeriod(job, labels.present),
-              months > 0
-                ? formatDuration(months, lang, {
-                    display: "short",
-                    units: labels,
-                  })
-                : undefined
-            )}
-            summary={job.summary}
-            highlights={job.highlights}
-            tags={job.keywords}
-          />
-        )
-      })}
+    <Section title={workTitle(resume.work, context)}>
+      {resume.work.map((job) => (
+        <TimelineItem
+          key={`${job.name}-${job.startDate}`}
+          title={
+            <>
+              {job.position} · <TitleLink url={job.url}>{job.name}</TitleLink>
+            </>
+          }
+          subtitle={joinParts(job.description, job.location)}
+          period={jobPeriod(job, context)}
+          summary={job.summary}
+          highlights={job.highlights}
+          tags={job.keywords}
+        />
+      ))}
     </Section>
   )
 }

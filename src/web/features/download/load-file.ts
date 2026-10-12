@@ -15,10 +15,13 @@ export function fileLoader<T>(load: (url: string) => Promise<T>) {
   }
 }
 
-export async function fetchOk(url: string) {
+async function fetchOk(url: string) {
   const response = await fetch(url)
   if (!response.ok) {
     throw new Error(`${url}: ${response.status}`)
   }
   return response
 }
+
+/** A text file's content: JSON, Markdown. */
+export const loadText = fileLoader(async (url) => (await fetchOk(url)).text())

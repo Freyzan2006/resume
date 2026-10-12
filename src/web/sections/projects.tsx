@@ -1,6 +1,7 @@
 import { formatPeriod } from "@core/period"
+import { projectRole } from "@core/resume-format"
 
-import { joinParts, Section, type SectionProps } from "./section"
+import { Section, type SectionProps } from "./section"
 import { TimelineItem, TitleLink } from "./timeline"
 
 export function ProjectsSection({ locale: { resume, labels } }: SectionProps) {
@@ -14,7 +15,7 @@ export function ProjectsSection({ locale: { resume, labels } }: SectionProps) {
         <TimelineItem
           key={project.name}
           title={<TitleLink url={project.url}>{project.name}</TitleLink>}
-          subtitle={joinParts(project.roles.join(", "), project.entity)}
+          subtitle={projectRole(project)}
           period={formatPeriod(project, labels.present)}
           summary={project.description}
           highlights={project.highlights}

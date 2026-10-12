@@ -7,10 +7,6 @@ import { Text } from "@web/ui/typography"
 /** Every section gets the whole language version and picks what it renders. */
 export type SectionProps = { locale: Locale }
 
-/** "a", undefined, "b" → "a · b"; nothing → undefined. */
-export const joinParts = (...parts: (string | undefined)[]) =>
-  parts.filter(Boolean).join(" · ") || undefined
-
 export function Section({
   title,
   children,

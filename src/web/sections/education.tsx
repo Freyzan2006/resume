@@ -1,6 +1,7 @@
 import { formatPeriod } from "@core/period"
+import { degree } from "@core/resume-format"
 
-import { joinParts, Section, type SectionProps } from "./section"
+import { Section, type SectionProps } from "./section"
 import { TimelineItem, TitleLink } from "./timeline"
 
 export function EducationSection({ locale: { resume, labels } }: SectionProps) {
@@ -14,10 +15,7 @@ export function EducationSection({ locale: { resume, labels } }: SectionProps) {
         <TimelineItem
           key={`${item.institution}-${item.startDate}`}
           title={<TitleLink url={item.url}>{item.institution}</TitleLink>}
-          subtitle={joinParts(
-            [item.studyType, item.area].filter(Boolean).join(", "),
-            item.score
-          )}
+          subtitle={degree(item)}
           period={formatPeriod(item, labels.present)}
           tags={item.courses}
         />

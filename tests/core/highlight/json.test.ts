@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { jsonTokens } from "@core/json-tokens.ts"
+import { jsonTokens } from "@core/highlight/json.ts"
 
 describe("jsonTokens", () => {
   it("tells keys from values", () => {

@@ -1,5 +1,6 @@
 import type { FormatName } from "../../core/formats.ts"
 import { exportJson } from "./json.ts"
+import { exportMarkdown } from "./markdown.ts"
 import { exportPdf } from "./pdf.ts"
 import type { Exporter } from "./types.ts"
 
@@ -7,4 +8,5 @@ import type { Exporter } from "./types.ts"
 export const exporters: Record<FormatName, Exporter> = {
   pdf: exportPdf,
   json: exportJson,
+  md: exportMarkdown,
 }

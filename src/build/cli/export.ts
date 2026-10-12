@@ -22,7 +22,14 @@ try {
     for (const { format, href } of locale.downloads) {
       const outFile = resolve(DIST_DIR, href)
       const source = sources[locale.lang]
-      await exporters[format]({ locale, source, path, outFile, session })
+      await exporters[format]({
+        locale,
+        source,
+        sections: data.sections,
+        path,
+        outFile,
+        session,
+      })
       console.log(`${format}: ${outFile}`)
     }
 

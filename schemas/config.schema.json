@@ -56,7 +56,8 @@
         "type": "string",
         "enum": [
           "pdf",
-          "json"
+          "json",
+          "md"
         ]
       }
     },
