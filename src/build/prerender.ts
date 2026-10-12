@@ -7,7 +7,7 @@ import type { BrowserSession } from "./browser.ts"
 
 const ROOT_OPEN = '<div id="root">'
 
-/** index.html with `content` in place of the loading skeleton of #root. */
+/** index.html with `content` inside its empty #root. */
 export function fillRoot(html: string, content: string) {
   const start = html.indexOf(ROOT_OPEN)
   const end = html.lastIndexOf("</div>", html.indexOf("</body>"))
@@ -36,7 +36,7 @@ export async function prerenderPages(
     const page = await browser.newPage({ colorScheme: "light" })
     try {
       await page.goto(`${siteUrl}${path}`, { waitUntil: "networkidle" })
-      await page.waitForSelector("main:not([aria-busy])")
+      await page.waitForSelector("#root main")
       rendered.push({
         file: join(distDir, path, "index.html"),
         content: await page.innerHTML("#root"),

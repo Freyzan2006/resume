@@ -3,11 +3,9 @@ import { describe, expect, it } from "vitest"
 import { fillRoot } from "@build/prerender.ts"
 
 describe("fillRoot", () => {
-  it("replaces the skeleton of #root, keeping the rest of the page", () => {
+  it("fills the empty #root, keeping the rest of the page", () => {
     const html = `<body>
-    <div id="root">
-      <main aria-busy="true"><div class="skeleton"></div></main>
-    </div>
+    <div id="root"></div>
   </body>`
 
     expect(fillRoot(html, "<main>Ivan</main>")).toBe(`<body>

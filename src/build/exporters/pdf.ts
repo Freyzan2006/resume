@@ -9,8 +9,7 @@ export const exportPdf: Exporter = async ({ path, outFile, session }) => {
     await page.goto(`${await session.siteUrl()}${path}`, {
       waitUntil: "networkidle",
     })
-    // The app has replaced the loading skeleton of index.html.
-    await page.waitForSelector("main:not([aria-busy])")
+    await page.waitForSelector("#root main")
     // Runs in the page; a string keeps DOM types out of the Node tsconfig.
     await page.evaluate("document.fonts.ready.then(() => {})")
     await page.pdf({

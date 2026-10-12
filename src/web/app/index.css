@@ -242,14 +242,6 @@
 
 /* Markdown from assets/, rendered at build time: always the `copy` role. */
 @layer components {
-  /*
-   * Loading placeholder: shadcn's Skeleton (src/web/ui/skeleton.tsx) and the
-   * static skeleton in index.html, which shows before the JS runs.
-   */
-  .skeleton {
-    @apply animate-pulse rounded-xl bg-muted motion-reduce:animate-none;
-  }
-
   .markdown {
     @apply text-copy;
   }
