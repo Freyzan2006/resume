@@ -27,7 +27,7 @@ function textPreview<T extends string>(
       <Text
         variant="annotation"
         render={<pre />}
-        className="wrap-break-word whitespace-pre-wrap"
+        className="wrap-anywhere whitespace-pre-wrap"
       >
         <code>
           {tokens.map((token, index) => (

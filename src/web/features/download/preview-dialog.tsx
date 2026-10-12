@@ -66,7 +66,7 @@ export function PreviewDialog({
         // Focus on «Download», so Enter downloads the shown file.
         <DialogContent
           className={cn(
-            "sm:max-w-2xl",
+            "grid-cols-[minmax(0,1fr)] sm:max-w-2xl",
             // Phones: the whole screen, the preview takes what is left.
             "max-sm:translate-none max-sm:inset-0 max-sm:h-dvh max-sm:max-w-none max-sm:grid-rows-[auto_1fr_auto] max-sm:gap-4 max-sm:rounded-none max-sm:p-4 max-sm:pb-[max(1rem,env(safe-area-inset-bottom))]"
           )}
@@ -85,9 +85,13 @@ export function PreviewDialog({
             onValueChange={(value: Download["format"]) => onFormatChange(value)}
           >
             {downloads.length > 1 && (
-              <TabsList className="max-w-full overflow-x-auto">
+              <TabsList className="max-sm:w-full">
                 {downloads.map((item) => (
-                  <TabsTrigger key={item.format} value={item.format}>
+                  <TabsTrigger
+                    key={item.format}
+                    value={item.format}
+                    className="max-sm:px-1"
+                  >
                     {item.label}
                   </TabsTrigger>
                 ))}
@@ -126,7 +130,7 @@ export function PreviewDialog({
             })}
           </Tabs>
 
-          <DialogFooter className="max-sm:flex-row max-sm:items-center">
+          <DialogFooter className="max-sm:flex-row max-sm:flex-wrap max-sm:items-center">
             {Action && (
               <div className="sm:mr-auto">
                 <Action download={current} labels={labels} />
