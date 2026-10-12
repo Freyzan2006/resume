@@ -170,7 +170,7 @@ describe("loadSite: languages", () => {
 
     expect(ru.downloads[0]).toEqual({
       format: "json",
-      label: "JSON Resume",
+      label: "JSON",
       href: "resume.ru.json",
       filename: "Иван (RU).json",
     })
