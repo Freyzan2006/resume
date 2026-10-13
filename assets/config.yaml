@@ -11,7 +11,7 @@ profile: full-stack
 
 # Адрес сайта. Нужен для canonical, hreflang и sitemap.xml; без него
 # поисковые теги, которым нужен полный URL, не выводятся.
-url: https://freyzan2006.github.io/
+url: https://timurtukfatullin.uz/
 
 # Основной язык: его версия открывается по умолчанию. Остальные языки берутся
 # из файлов resume.<язык>.yaml профиля и переключаются на сайте.

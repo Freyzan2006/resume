@@ -22,7 +22,7 @@ variable "cloudflare_account_id" {
 variable "serve_from_domain" {
   description = "Point GitHub Pages at the domain. Turn on only once the domain resolves to GitHub: from then on the github.io address redirects to it."
   type        = bool
-  default     = false
+  default     = true
 }
 
 variable "enforce_https" {
