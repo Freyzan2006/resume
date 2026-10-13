@@ -26,7 +26,7 @@ variable "serve_from_domain" {
 }
 
 variable "enforce_https" {
-  description = "Set to true once GitHub has issued the certificate for the domain (minutes to a day after DNS works); null leaves the setting as it is."
+  description = "Redirect http to https. Needs the certificate GitHub issues for the domain (minutes to a day after DNS works)."
   type        = bool
   default     = true
 }

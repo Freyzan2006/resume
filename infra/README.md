@@ -5,7 +5,10 @@ GitHub Pages. Всё, кроме разовых шагов ниже, описа�
 
 - `dns.tf` — зона в Cloudflare, A/AAAA-записи домена на GitHub Pages, `www` →
   CNAME, TXT для подтверждения домена в GitHub (необязательно);
-- `pages.tf` — GitHub Pages репозитория: сборка через Actions, свой домен, HTTPS;
+- `pages.tf` + `pages.sh` — GitHub Pages репозитория: сборка через Actions,
+  свой домен, HTTPS. Не через ресурс провайдера GitHub: в версии 6.13.0 любое
+  изменение Pages, кроме домена, удаляет домен (отправляет `"cname": null`),
+  поэтому настройки ставит скрипт через API, каждый раз вместе с доменом;
 - `main.tf` — провайдеры и состояние в Cloudflare R2 (бакет `resume-tfstate`).
 
 Изменения проходят через PR: workflow `Infra` показывает `terraform plan`, после
