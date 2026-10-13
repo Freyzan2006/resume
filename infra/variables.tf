@@ -1,18 +1,18 @@
+# Values for this site are in terraform.tfvars.
+
 variable "domain" {
-  description = "The site's domain, registered at aHost, DNS on Cloudflare."
+  description = "The site's domain; DNS is on Cloudflare."
   type        = string
-  default     = "timurtukfatullin.uz"
 }
 
 variable "github_owner" {
-  type    = string
-  default = "Freyzan2006"
+  description = "The GitHub account the repository belongs to."
+  type        = string
 }
 
 variable "repository" {
   description = "The repository GitHub Pages serves the site from."
   type        = string
-  default     = "resume"
 }
 
 variable "cloudflare_account_id" {
@@ -22,13 +22,13 @@ variable "cloudflare_account_id" {
 variable "serve_from_domain" {
   description = "Point GitHub Pages at the domain. Turn on only once the domain resolves to GitHub: from then on the github.io address redirects to it."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "enforce_https" {
   description = "Redirect http to https. Needs the certificate GitHub issues for the domain (minutes to a day after DNS works)."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "github_pages_challenge" {

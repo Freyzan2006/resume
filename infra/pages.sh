@@ -3,12 +3,17 @@
 # domain, so every request carries it. Needs GITHUB_TOKEN (Pages: write).
 set -euo pipefail
 
+PAGES="https://api.github.com/repos/$REPOSITORY/pages"
+AUTH=(-H "Authorization: Bearer $GITHUB_TOKEN" -H "Accept: application/vnd.github+json")
+
 put() {
-  curl -fsS -X PUT \
-    -H "Authorization: Bearer $GITHUB_TOKEN" \
-    -H "Accept: application/vnd.github+json" \
-    "https://api.github.com/repos/$REPOSITORY/pages" -d "$1"
+  curl -fsS -X PUT "${AUTH[@]}" "$PAGES" -d "$1"
 }
+
+# A new repository (a fork) has no Pages site yet: create one built by Actions.
+if [ "$(curl -sS -o /dev/null -w "%{http_code}" "${AUTH[@]}" "$PAGES")" = 404 ]; then
+  curl -fsS -X POST "${AUTH[@]}" "$PAGES" -d '{"build_type": "workflow"}' >/dev/null
+fi
 
 if [ -z "$CNAME" ]; then
   put '{"cname": null, "build_type": "workflow"}'

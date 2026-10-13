@@ -34,7 +34,8 @@ assets/
 - **Фото** — `basics.image`: URL или путь относительно файла резюме
   (`image: ../photo.jpg`).
 - **Стаж** считается автоматически из дат `work`: у каждой работы и общий в
-  заголовке раздела. Пересекающиеся периоды не суммируются дважды.
+  заголовке раздела. Считается как на hh.ru: от месяца начала до месяца окончания, не включая его;
+  пересекающиеся периоды не суммируются дважды.
 - Поля `summary`, `description` и `highlights` поддерживают markdown.
 - Даты: `YYYY`, `YYYY-MM` или `YYYY-MM-DD`; пустой `endDate` — «по настоящее время».
 - Сверх JSON Resume: `work[].keywords` — стек технологий.
@@ -170,11 +171,71 @@ JetBrains Mono.
 подписи в `src/core/labels.ts`, компонент в `src/web/sections/` и запись в
 реестре `src/web/sections/index.ts`.
 
-## Деплой
+## Деплой от А до Я
 
-`.github/workflows/ci.yml` на push в `main` прогоняет проверки, собирает сайт
-со всеми файлами для скачивания и публикует `dist/` на GitHub Pages.
+Сайт публикуется на GitHub Pages из GitHub Actions. Свой домен — по желанию,
+отдельным этапом.
 
-Домен, DNS (Cloudflare) и настройки GitHub Pages описаны в Terraform в `infra/`,
-состояние лежит в Cloudflare R2; workflow `Infra` показывает план в PR и
-применяет его после слияния. Разовые шаги — в `infra/README.md`.
+### 1. Что нужно
+
+- аккаунт GitHub (для бесплатного Pages репозиторий должен быть публичным);
+- [Bun](https://bun.sh) 1.2+ и Node.js 24 — экспорт файлов запускается в Node;
+- Chromium или Chrome — для PDF, превью и prerender (или
+  `bunx playwright install chromium`);
+- [`gh`](https://cli.github.com) с `gh auth login`;
+- для своего домена ещё Terraform 1.11+, аккаунт Cloudflare и купленный домен.
+
+### 2. Репозиторий и свои данные
+
+```sh
+gh repo fork Freyzan2006/resume --clone --fork-name resume
+cd resume
+bun install
+rm -r assets && cp -r examples/assets assets
+sed -i '1s|\.\./||' assets/config.yaml assets/*/*.yaml   # пути к схемам на уровень выше
+```
+
+Дальше — своё резюме в `assets/<профиль>/resume.<язык>.yaml` и настройки в
+`assets/config.yaml` (см. «Контент»). Ненужные профили, языки и фото удалите.
+`url` пока поставьте адрес, на котором сайт будет на GitHub Pages:
+`https://<аккаунт>.github.io/<репозиторий>/` (или `https://<аккаунт>.github.io/`
+для репозитория `<аккаунт>.github.io`).
+
+Проверка локально:
+
+```sh
+bun run dev     # сайт с live-reload
+bun run build   # всё, что уйдёт на сайт: dist/ с PDF, Word, JSON, Markdown
+bun run ci      # те же проверки, что в GitHub
+```
+
+### 3. Первый деплой на github.io
+
+1. Включить Pages с публикацией из Actions (один раз):
+
+   ```sh
+   gh api -X POST repos/<аккаунт>/<репозиторий>/pages -f build_type=workflow
+   ```
+
+2. `git push` в `main`. Workflow `CI` (`.github/workflows/ci.yml`): проверки →
+   сборка со всеми файлами для скачивания → публикация `dist/` на Pages.
+3. Сайт открывается по адресу из `url`. Проверить: страницы всех языков,
+   скачивание и превью файлов, переключение темы.
+
+Дальше любое изменение в `assets/` и `git push` — новый деплой.
+
+### 4. Свой домен
+
+Домен, DNS в Cloudflare и настройки Pages описаны в Terraform в `infra/`,
+состояние лежит в Cloudflare R2, изменения применяет workflow `Infra` после
+слияния в `main`. Коротко:
+
+1. свои домен, аккаунт и репозиторий в `infra/terraform.tfvars`;
+2. токены Cloudflare и GitHub, `./infra/bootstrap.sh` — бакет и секреты CI;
+3. push → зона и DNS-записи в Cloudflare, в выводе — NS-серверы;
+4. эти NS — у регистратора домена;
+5. когда домен отвечает адресами GitHub: `serve_from_domain = true` и
+   `url: https://<домен>/` в `assets/config.yaml`;
+6. когда GitHub выпустит сертификат: `enforce_https = true`.
+
+Подробно, с правами токенов и проверками на каждом шаге, — в `infra/README.md`.
