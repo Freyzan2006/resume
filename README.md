@@ -172,5 +172,9 @@ JetBrains Mono.
 
 ## Деплой
 
-`.github/workflows/deploy.yml` на push в `main` прогоняет lint, тесты, сборку с
-PDF и публикует `dist/` на GitHub Pages (Settings → Pages → Source: GitHub Actions).
+`.github/workflows/ci.yml` на push в `main` прогоняет проверки, собирает сайт
+со всеми файлами для скачивания и публикует `dist/` на GitHub Pages.
+
+Домен, DNS (Cloudflare) и настройки GitHub Pages описаны в Terraform в `infra/`,
+состояние лежит в Cloudflare R2; workflow `Infra` показывает план в PR и
+применяет его после слияния. Разовые шаги — в `infra/README.md`.
