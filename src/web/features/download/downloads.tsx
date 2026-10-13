@@ -1,5 +1,5 @@
 import { ChevronDown, Download as DownloadIcon, Eye } from "lucide-react"
-import { useState } from "react"
+import { lazy, Suspense, useState } from "react"
 
 import type { Download, Locale } from "@core/types"
 import { Button } from "@web/ui/button"
@@ -12,8 +12,18 @@ import {
   DropdownMenuTrigger,
 } from "@web/ui/dropdown-menu"
 
-import { PreviewDialog } from "./preview-dialog"
-import { hasPreview } from "./previews"
+import { hasPreview } from "./preview-formats"
+
+// The dialog and every preview are a separate chunk: most visitors only
+// download. Hovering or focusing a preview control starts loading it.
+const loadPreviewDialog = () => import("./preview-dialog")
+const PreviewDialog = lazy(async () => ({
+  default: (await loadPreviewDialog()).PreviewDialog,
+}))
+const preload = {
+  onPointerEnter: loadPreviewDialog,
+  onFocus: loadPreviewDialog,
+}
 
 /**
  * «Download PDF» in one click: the first format of config.yaml. Next to it,
@@ -46,6 +56,7 @@ export function Downloads({
         <DropdownMenuTrigger
           render={<Button variant="outline" size="icon-sm" />}
           aria-label={labels.download}
+          {...preload}
         >
           <ChevronDown />
         </DropdownMenuTrigger>
@@ -77,6 +88,7 @@ export function Downloads({
           size="icon-sm"
           onClick={preview}
           aria-label={labels.preview}
+          {...preload}
         >
           <Eye />
         </Button>
@@ -98,14 +110,18 @@ export function Downloads({
         </Button>
         {more}
       </ButtonGroup>
-      <PreviewDialog
-        downloads={previewable}
-        format={format}
-        onFormatChange={setFormat}
-        labels={labels}
-        open={open}
-        onOpenChange={setOpen}
-      />
+      {format && (
+        <Suspense fallback={null}>
+          <PreviewDialog
+            downloads={previewable}
+            format={format}
+            onFormatChange={setFormat}
+            labels={labels}
+            open={open}
+            onOpenChange={setOpen}
+          />
+        </Suspense>
+      )}
     </>
   )
 }

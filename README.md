@@ -81,6 +81,7 @@ bun run build:site     # только сайт: без файлов для ск�
 bun run export         # шаги после сборки для уже собранного dist/
 bun run test           # vitest
 bun run schema         # перегенерировать schemas/ после правки схем
+bun run cn:tables      # таблицы для cn (сами запускаются перед dev, typecheck и build)
 bun run check          # biome: формат, импорты, классы Tailwind, линт (с исправлением)
 bun run ci             # biome ci + typecheck + knip + тесты
 ```

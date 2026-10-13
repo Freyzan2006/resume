@@ -20,6 +20,23 @@ export default defineConfig({
       "@tests": resolve(import.meta.dirname, "tests"),
     },
   },
+  build: {
+    rolldownOptions: {
+      output: {
+        codeSplitting: {
+          // React changes only with dependencies: a chunk of its own stays
+          // cached across content edits. A narrow test on purpose, so lazily
+          // loaded code (previews, pdf.js) stays out of it.
+          groups: [
+            {
+              name: "react",
+              test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+            },
+          ],
+        },
+      },
+    },
+  },
   test: {
     include: ["tests/**/*.test.ts"],
   },
